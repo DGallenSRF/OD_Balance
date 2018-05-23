@@ -1,0 +1,237 @@
+---
+title: "R Notebook"
+output:
+  html_notebook:
+    theme: united
+    highlight: tango
+---
+
+```{r setup}
+
+knitr::opts_knit$set(root.dir = "C:/Users/dgallen/Desktop/Projects/OD balance")
+
+percent <- matrix(c(.058996,0,0,0,0,0,0,0,0,0,0,
+                    .015345,0,.021764,0,0,0,0,0,0,0,0,
+                    .023861,0,.0454,.205,0,0,0,0,0,0,0,
+                    .08912,.087,.227,.193309,.167668,.167668,0,0,0,0,0,
+                    .4905,.1886,.387468,.0557,.181897,.181897,0,0,0,0,0,
+                    .088092,.1146,.1046,.1245,.4956,.4957,.5769,0,0,0,0,
+                    .06139,.254,.14186,.1177,.075,.072,.1273,.301,.0835,.083501,.08457,
+                    .0147,0,0.0009,.037175,0,0,.063356,.063797,.2961,.2961,.306974,
+                    .15795,.355,.07006,.266419,.079,0.079,.232417,.635,.62,.6203,.608457), nrow = 11, ncol = 9)
+volume <- matrix(c(401,25,625,81,80,0,57,119,310,28,180), nrow = 11)
+target <- matrix(c(32,28,61,115,297,275,391,136,571), ncol = 9)
+
+
+# percent <- data.matrix(read.csv('matrix.csv',
+#                                 header = FALSE,
+#                                 stringsAsFactors = FALSE))
+# target <- matrix(c(64,27,25,22,42,102,93,45,189,322,43,87,831),ncol = 13)                   
+# volume <- matrix(c(538,97,351,50,98,55,237,7,131,2,47,20,89,43,49,78), nrow = 16)                  
+```
+
+Check to ensure that the target and volume sets sum to the same value.
+
+```{r Check datasets}
+sum(target) == sum(volume)
+
+
+print(target)
+print(volume)
+```
+
+Also make sure that the rows of the percent matrix sum to 100 (as they should when orginially imported from streetlight).
+
+```{r percent check}
+
+rowSums(percent) 
+
+```
+
+The values are hard coded here with 4+ significant digits but it is close enough for this step.
+
+#### Change Percentages to get cars within 5
+
+Create a function that will iterate through each column and change +- 1% to get the difference between the target and volume to less than 5 cars.
+
+```{r}
+
+scramble <- function(volume,percent,target) {
+  
+  col_no <- ncol(percent)
+  row_no <- nrow(percent)
+  
+  ## setup a matrix to hold the results
+  j <- matrix(nrow = row_no, ncol = col_no)
+  
+  
+  for(n in c(1:col_no)) {
+    
+    x <- percent[,n]
+    
+    cnt <- 1
+    # itr <- 1
+    
+    ##repeat loop will stop on given if command - see below
+    repeat {
+      x[cnt] <- ifelse(x[cnt] <= .01,
+                       x[cnt],
+                       ifelse(x[cnt] >= .99,
+                              x[cnt],
+                              ifelse(sum(x*volume, na.rm = T)-target[n] < 0,
+                                     x[cnt] + .01,
+                                     x[cnt] - .01)))
+      
+      cnt <- ifelse(cnt == row_no, 1, cnt + 1)
+      # itr <- itr + 1
+      
+      ##if total cars are less than 5 "break" the loop
+      if(abs(sum(x * volume, na.rm = T) - target[n]) < 5) {
+        break
+      }
+    }
+    j[,n] <- x
+  }
+  return(j)
+}
+```
+
+Check results:
+
+```{r}
+
+sc <- scramble(volume = volume, percent = percent, target = target)
+round(sc,3)
+colSums(apply(l, 2, function(x) x * volume))-target
+```
+
+#### Fix percentage column
+
+Iterate through the matrix to get the percentage sum for each row to be within 1% of 100%.
+
+```{r}
+
+percent_fix <- function(dat,target){
+  
+  col_no <- ncol(dat)
+  row_no <- nrow(dat)
+  
+  for(n in c(1:row_no)){
+    
+    repeat {
+      
+      col_diff <- colSums(apply(dat,2,function(x) x*volume))-target
+      row_sum <- rowSums(dat)
+      
+      index1 <- 1
+      
+      repeat {
+        
+        min_col <- match(sort(abs(col_diff))[index1],
+                         abs(col_diff))
+        index1 <- index1 + 1
+        
+        if(dat[n,min_col] >= 0.01 & dat[n,min_col] <= 0.99){
+          break
+        }
+      }
+      
+      col_diff <- colSums(apply(dat,2,function(x) x*volume))-target
+      row_sum <- rowSums(dat)
+      
+      index2 <- 1
+      repeat {
+        
+        max_col <- match(sort(abs(col_diff),decreasing = TRUE)[index2],
+                         abs(col_diff))
+        index2 <- index2 + 1
+        
+        if(dat[n,max_col] >= 0.01 & dat[n,max_col] <= 0.99){
+          break
+        }
+      }
+      
+      min_col_index <- min_col
+      max_col_index <- max_col
+      x <- ifelse(row_sum[n] < 1, 
+                  min_col_index, 
+                  max_col_index)
+      dat[n,x] <- ifelse(row_sum[n] < 1, 
+                         dat[n,x] + .01, 
+                         dat[n,x] - .01)
+      rowSums(dat)[1]
+      
+      if(rowSums(dat)[n] >= 0.99 & rowSums(dat)[n] <= 1.01) {
+        break
+      }
+    }
+    return(dat)
+  }
+}
+```
+
+```{r}
+perc <- percent_fix(dat = sc, target = target)
+round(perc,2)
+rowSums(perc)
+```
+
+This will have thrown off our column sums which no longer will be with 5 cars of the target.
+
+```{r column sum checks}
+colSums(apply(perc, 2, function(x) x * volume))-target
+```
+
+
+#### Distribute remainders
+
+Create a function to distrubute the remainding balance across the table. 
+
+
+```{r}
+
+porportion <- function(dat,volume) {
+  
+  dat_new <- round(apply(dat,2,function(x) x * volume),0)
+  
+  sum_col <- colSums(dat_new)
+  
+  porportion <- mapply(function(x) {dat_new[,x]/sum_col[x]},
+                       x = c(1:ncol(dat_new)))
+  
+  col_diff <- sum_col-target
+  
+  prop_diff <- mapply(function(x) {porportion[,x]*col_diff[x]},
+                      x = c(1:ncol(porportion)))
+  
+  diff <- mapply(function(x) {ifelse(is.na(prop_diff[,x]/volume),prop_diff[,x],prop_diff[,x]/volume)},
+                 x = c(1:ncol(prop_diff)))
+  
+  k <- dat - diff
+  
+  dat_final <- k
+  dat_final[,ncol(dat_final)] <- k[,ncol(k)] - (rowSums(k)-1)
+  
+  return(dat_final)
+}
+```
+
+Check the final data set.
+
+```{r check final}
+final_data <- porportion(dat = perc, volume = volume)
+
+round(final_data,2)
+rowSums(final_data)
+round(colSums(apply(final_data,2,function(x) x*volume))-target,3)
+```
+
+Show the difference from the original.
+
+```{r difference from start}
+
+final_data - percent
+
+
+```
+
