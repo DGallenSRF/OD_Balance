@@ -8,7 +8,7 @@ output:
 
 ```{r setup}
 
-knitr::opts_knit$set(root.dir = "C:/Users/dgallen/Desktop/Projects/OD balance")
+knitr::opts_knit$set(root.dir = "C:/Users/dgallen/Desktop/Projects/OD balance/OD")
 
 # percent <- matrix(c(.058996,0,0,0,0,0,0,0,0,0,0,
 #                     .015345,0,.021764,0,0,0,0,0,0,0,0,
@@ -33,12 +33,12 @@ knitr::opts_knit$set(root.dir = "C:/Users/dgallen/Desktop/Projects/OD balance")
 #                                 stringsAsFactors = FALSE))
 # target <- matrix(c(64,27,25,22,42,102,93,45,189,322,43,87,831),ncol = 13)                   
 # volume <- matrix(c(538,97,351,50,98,55,237,7,131,2,47,20,89,43,49,78), nrow = 16)                  
-dir()
+getwd()
 percent <- data.matrix(read.csv('matrix2.csv',
                                 header = FALSE,
                                 stringsAsFactors = FALSE))
-target <- matrix(c(40,37,81,129,133,56,59,239,151,840),ncol = 13)
-volume <- matrix(c(910,173,1,43,231,78,50,42,63,65,37,71,33,294,24), nrow = 16)
+target <- matrix(c(401,86,81,129,133,56,59,239,151,840),ncol = 10)
+volume <- matrix(c(940,203,1,43,231,78,50,42,63,65,37,71,33,294,24), nrow = 15)
 ```
 
 Check to ensure that the target and volume sets sum to the same value.
@@ -46,6 +46,8 @@ Check to ensure that the target and volume sets sum to the same value.
 ```{r Check datasets}
 sum(target) == sum(volume)
 
+print(sum(target))
+print(sum(volume))
 
 print(target)
 print(volume)
@@ -78,14 +80,14 @@ scramble <- function(volume,percent,target) {
   
   for(n in c(1:col_no)) {
     
-    x <- percent[,n]
+    x <- round(percent[,n],2)
     
     cnt <- 1
     # itr <- 1
     
     ##repeat loop will stop on given if command - see below
     repeat {
-      x[cnt] <- ifelse(x[cnt] <= .01,
+      x[cnt] <- ifelse(x[cnt] == .01,
                        x[cnt],
                        ifelse(x[cnt] >= .99,
                               x[cnt],
@@ -112,7 +114,7 @@ Check results:
 ```{r}
 
 sc <- scramble(volume = volume, percent = percent, target = target)
-round(sc,3)
+sc
 colSums(apply(sc, 2, function(x) x * volume))-target
 ```
 
@@ -122,17 +124,20 @@ Iterate through the matrix to get the percentage sum for each row to be within 1
 
 ```{r}
 
-percent_fix <- function(dat,target){
+percent_fix <- function(dat,target,volume){
   
   col_no <- ncol(dat)
   row_no <- nrow(dat)
+  j <- matrix(nrow = row_no, ncol = col_no)
   
   for(n in c(1:row_no)){
     
+    y <- dat[n,]
+
     repeat {
       
       col_diff <- colSums(apply(dat,2,function(x) x*volume))-target
-      row_sum <- rowSums(dat)
+      row_sum <- sum(y)
       
       index1 <- 1
       
@@ -141,36 +146,34 @@ percent_fix <- function(dat,target){
         min_col <- match(sort(col_diff)[index1],col_diff)
         index1 <- index1 + 1
         
-        if(dat[n,min_col] >= 0.01 & dat[n,min_col] <= 0.99){
+        if(y[min_col] >= 0.01 & y[min_col] <= 0.99 | any(y == 1)){
           break
         }
       }
-      
-      col_diff <- colSums(apply(dat,2,function(x) x*volume))-target
-      row_sum <- rowSums(dat)
-      
+
       index2 <- 1
       repeat {
         
         max_col <- match(sort(col_diff,decreasing = TRUE)[index2],col_diff)
         index2 <- index2 + 1
         
-        if(dat[n,max_col] >= 0.01 & dat[n,max_col] <= 0.99){
+        if(y[max_col] >= 0.01 & y[max_col] <= 0.99 | any(y == 1)){
           break
         }
       }
       
       min_col_index <- min_col
       max_col_index <- max_col
-      x <- ifelse(row_sum[n] < 1, 
+      x <- ifelse(row_sum < 1, 
                   min_col_index, 
                   max_col_index)
-      dat[n,x] <- ifelse(row_sum[n] < 1, 
-                         dat[n,x] + .01, 
-                         dat[n,x] - .01)
-      rowSums(dat)[1]
       
-      if(rowSums(dat)[n] >= 0.99 & rowSums(dat)[n] <= 1.01) {
+      y[x] <- ifelse(any(y ==1),y[x],
+                     ifelse(sum(y) < 1, y[x] + .01, y[x] - .01))
+      
+      dat[n,] <- y
+      
+      if(sum(y) >= 0.99 & sum(y) <= 1.01) {
         break
       }
     }
@@ -181,8 +184,8 @@ return(dat)
 ```
 
 ```{r}
-perc <- percent_fix(dat = sc, target = target)
-round(perc,2)
+perc <- percent_fix(dat = sc, target = target,volume = volume)
+perc
 rowSums(perc)
 ```
 
@@ -231,9 +234,9 @@ Check the final data set.
 ```{r check final}
 final_data <- porportion(dat = perc, volume = volume)
 
-round(final_data,2)
+final_data
 rowSums(final_data)
-round(colSums(apply(final_data,2,function(x) x*volume))-target,3)
+colSums(apply(round(final_data,2),2,function(x) x*volume))-target
 ```
 
 Show the difference from the original.
