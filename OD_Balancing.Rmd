@@ -263,7 +263,5 @@ round(final_data - percent,3)
 
 ```
 
-```{r}
-heatmap(round(final_data - percent,3),Rowv = NA,Colv = NA,reorderfun = function(d,w) reorder() scale = 'row',col = heat.colors(256))
-```
+
 
