@@ -201,7 +201,7 @@ colSums(apply(perc, 2, function(x) x * volume))-target
 Create a function to distrubute the remainding balance across the table. 
 
 
-```{r}
+```{r proportion percentages}
 
 porportion <- function(dat,volume) {
   
