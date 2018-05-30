@@ -10,6 +10,21 @@ output:
 
 knitr::opts_knit$set(root.dir = "C:/Users/dgallen/Desktop/Projects/OD balance/OD")
 getwd()
+library(readxl)
+```
+
+```{r load data}
+dir()
+read_excel_sheets <- function(file){
+  
+  sheets <- readxl::excel_sheets(file)
+  x <- lapply(sheets, function(x) readxl::read_xlsx(file, sheet = x,col_names = FALSE))
+  x <- lapply(x, as.matrix)
+  names(x) <- sheets
+  x
+}
+
+list <- read_excel_sheets("TablePercents_split.xlsx")
 
 # percent <- matrix(c(.058996,0,0,0,0,0,0,0,0,0,0,
 #                     .015345,0,.021764,0,0,0,0,0,0,0,0,
@@ -30,11 +45,11 @@ getwd()
 # target <- matrix(c(422,45,279), ncol = 3)
 
 
-percent <- data.matrix(read.csv('matrix3.csv',
-                                header = FALSE,
-                                stringsAsFactors = FALSE))
-volume <- matrix(c(297,77,52,20,39,25,83), nrow = 7)
-target <- matrix(c(61,38,494), ncol = 3)
+# percent <- data.matrix(read.csv('matrix3.csv',
+#                                 header = FALSE,
+#                                 stringsAsFactors = FALSE))
+# volume <- matrix(c(297,77,52,20,39,25,83), nrow = 7)
+# target <- matrix(c(61,38,494), ncol = 3)
 
 # volume <- matrix(c(329,84,64,15,54,11,105), nrow = 7)
 # target <- matrix(c(87,40,535), ncol = 3)
@@ -66,6 +81,13 @@ target <- matrix(c(61,38,494), ncol = 3)
 # volume <- matrix(c(940,203,1,43,231,78,50,42,63,65,37,71,33,294,24), nrow = 15)
 ```
 
+```{r}
+
+percent <- 
+
+```
+
+
 Check to ensure that the target and volume sets sum to the same value.
 
 ```{r Check datasets}
@@ -93,7 +115,7 @@ The values are hard coded here with 4+ significant digits but it is close enough
 
 Create a function that will iterate through each column and change +- 1% to get the difference between the target and volume to less than 5 cars.
 
-```{r}
+```{r iterate percentage by 1%}
 
 scramble <- function(volume,percent,target) {
   
@@ -148,7 +170,7 @@ colSums(apply(sc, 2, function(x) x * volume))-target
 
 Iterate through the matrix to get the percentage sum for each row to be within 1% of 100%.
 
-```{r}
+```{r percent fix}
 
 percent_fix <- function(dat,target,volume){
   
@@ -209,7 +231,7 @@ return(dat)
 
 ```
 
-```{r}
+```{r run percent fix}
 perc <- percent_fix(dat = sc, target = target,volume = volume)
 perc
 rowSums(perc)
