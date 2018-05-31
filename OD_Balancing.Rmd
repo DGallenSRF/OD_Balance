@@ -78,10 +78,14 @@ Check to ensure that the target and volume sets sum to the same value.
 
 ```{r Check datasets}
 
-    volume <- vol_3[[1]]$InputVol
-    target <- tar_3[[1]]$Value
-    percent  <- percent_3
-    
+vol_11 <- InputVol[[11]]
+tar_11 <- Targets[[11]]
+percent_11 <- percent_list[[11]]
+
+volume <- vol_11[[20]]$InputVol
+target <- tar_11[[20]]$Value
+percent  <- percent_11
+
 sum(target) == sum(volume)
 
 print(sum(target))
@@ -136,7 +140,7 @@ scramble <- function(volume,percent,target) {
       # itr <- itr + 1
       
       ##if total cars are less than 5 "break" the loop
-      if(abs(sum(x * volume, na.rm = T) - target[n]) < 5) {
+      if(abs(sum(x * volume, na.rm = T) - target[n]) < 6) {
         break
       }
     }
@@ -165,7 +169,6 @@ percent_fix <- function(dat,target,volume){
   
   col_no <- ncol(dat)
   row_no <- nrow(dat)
-  j <- matrix(nrow = row_no, ncol = col_no)
   
   for(n in c(1:row_no)){
     
@@ -183,7 +186,10 @@ percent_fix <- function(dat,target,volume){
         min_col <- match(sort(col_diff)[index1],col_diff)
         index1 <- index1 + 1
         
-        if(!is.na(y[min_col]) & y[min_col] >= 0.01 & y[min_col] <= 0.99 | y[min_col] ==1){
+        log1 <- !is.na(y[min_col]) & y[min_col] >= 0.01 & y[min_col] <= 0.99
+        log2 <- !is.na(y[min_col]) & y[min_col] == 1
+        
+        if(log1 | log2 ){
           break
         }
       }
@@ -194,7 +200,10 @@ percent_fix <- function(dat,target,volume){
         max_col <- match(sort(col_diff,decreasing = TRUE)[index2],col_diff)
         index2 <- index2 + 1
         
-        if(!is.na(y[max_col]) & y[max_col] >= 0.01 & y[max_col] <= 0.99 | y[max_col] ==1){
+        log1 <- !is.na(y[max_col]) & y[max_col] >= 0.01 & y[max_col] <= 0.99
+        log2 <- !is.na(y[max_col]) & y[max_col] == 1
+        
+        if(log1 | log2 ){
           break
         }
       }

@@ -55,20 +55,18 @@ for(n in 1:length(levels(as.factor(Target$Table)))) {
 }
 ```
 
-```{r}
-
-vol_3 <- InputVol[[3]]
-tar_3 <- Targets[[3]]
-percent_3 <- percent_list[[3]]
+```{r OD function}
 
 OD_Bal <- function(volume_list,percent,target_list){
+  
+  if(nrow(percent) != 1){
   
   table_list <- list()
   
   for(i in c(1:length(volume_list))){
     
-    volume <- vol_3[[i]]$InputVol
-    target <- tar_3[[i]]$Value
+    volume <- volume_list[[i]]$InputVol
+    target <- target_list[[i]]$Value
     
     # col_fix <- function(volume,percent,target) {
     
@@ -98,7 +96,7 @@ OD_Bal <- function(volume_list,percent,target_list){
         # itr <- itr + 1
         
         ##if total cars are less than 5 "break" the loop
-        if(abs(sum(x * volume, na.rm = T) - target[n]) < 5) {
+        if(abs(sum(x * volume, na.rm = T) - target[n]) < 6) {
           break
         }
       }
@@ -196,15 +194,171 @@ OD_Bal <- function(volume_list,percent,target_list){
   
   }
   return(table_list)
+  }
+  print('One row of data - target / volume')
+  return(target/volume)
+}
+
+
+```
+
+```{r table 3}
+vol_3 <- InputVol[[3]]
+tar_3 <- Targets[[3]]
+percent_3 <- percent_list[[3]]
+
+table3 <- OD_Bal(volume_list = vol_3, percent = percent_3, target_list = tar_3)
+```
+
+```{r table 2}
+vol_2 <- InputVol[[2]]
+tar_2 <- Targets[[2]]
+percent_2 <- percent_list[[2]]
+
+table2 <- OD_Bal(volume_list = vol_2, percent = percent_2, target_list = tar_2)
+
+for(i in c(1:20)){
+print(round(sum(colSums(apply(table2[[i]],2,function(x) x*vol_2[[i]]$InputVol), na.rm = TRUE)-tar_2[[i]]$Value),4))
+
+print(rowSums(table2[[i]],na.rm = TRUE))
+}
+```
+
+```{r table 1}
+
+vol_1 <- InputVol[[1]]
+tar_1 <- Targets[[1]]
+percent_1 <- percent_list[[1]]
+
+table1 <- OD_Bal(volume_list = vol_1, percent = percent_1, target_list = tar_1)
+
+for(i in c(1:20)){
+print(round(sum(colSums(apply(table1[[i]],2,function(x) x*vol_1[[i]]$InputVol), na.rm = TRUE)-tar_1[[i]]$Value),4))
+
+print(rowSums(table1[[i]],na.rm = TRUE))
 }
 
 ```
 
-```{r}
-final_data <- dat_final
-final_data
-rowSums(final_data, na.rm = TRUE)
-colSums(apply(final_data,2,function(x) x*volume),na.rm = TRUE)-target
-round(dat_final-percent,3)
+```{r table 4}
+
+vol_4 <- InputVol[[4]]
+tar_4 <- Targets[[4]]
+percent_4 <- percent_list[[4]]
+
+table4 <- OD_Bal(volume_list = vol_4, percent = percent_4, target_list = tar_4)
+
+for(i in c(1:20)){
+print(round(sum(colSums(apply(table4[[i]],2,function(x) x*vol_4[[i]]$InputVol), na.rm = TRUE)-tar_4[[i]]$Value),4))
+
+print(rowSums(table4[[i]],na.rm = TRUE))
+}
+
 ```
 
+
+```{r table 5}
+
+vol_5 <- InputVol[[5]]
+tar_5 <- Targets[[5]]
+percent_5 <- percent_list[[5]]
+
+table5 <- OD_Bal(volume_list = vol_5, percent = percent_5, target_list = tar_5)
+
+for(i in c(1:20)){
+print(round(sum(colSums(apply(table5[[i]],2,function(x) x*vol_5[[i]]$InputVol), na.rm = TRUE)-tar_5[[i]]$Value),5))
+
+print(rowSums(table5[[i]],na.rm = TRUE))
+}
+
+```
+
+```{r table 6}
+
+vol_6 <- InputVol[[6]]
+tar_6 <- Targets[[6]]
+percent_6 <- percent_list[[6]]
+
+table6 <- OD_Bal(volume_list = vol_6, percent = percent_6, target_list = tar_6)
+
+for(i in c(1:20)){
+print(round(sum(colSums(apply(table6[[i]],2,function(x) x*vol_6[[i]]$InputVol), na.rm = TRUE)-tar_6[[i]]$Value),6))
+
+print(rowSums(table6[[i]],na.rm = TRUE))
+}
+
+```
+
+```{r table 7}
+
+vol_7 <- InputVol[[7]]
+tar_7 <- Targets[[7]]
+percent_7 <- percent_list[[7]]
+
+table7 <- OD_Bal(volume_list = vol_7, percent = percent_7, target_list = tar_7)
+
+for(i in c(1:20)){
+print(round(sum(colSums(apply(table7[[i]],2,function(x) x*vol_7[[i]]$InputVol), na.rm = TRUE)-tar_7[[i]]$Value),7))
+
+print(rowSums(table7[[i]],na.rm = TRUE))
+}
+
+```
+
+```{r table 8}
+
+vol_8 <- InputVol[[8]]
+tar_8 <- Targets[[8]]
+percent_8 <- percent_list[[8]]
+
+table8 <- OD_Bal(volume_list = vol_8, percent = percent_8, target_list = tar_8)
+
+for(i in c(1:20)){
+print(round(sum(colSums(apply(table8[[i]],2,function(x) x*vol_8[[i]]$InputVol), na.rm = TRUE)-tar_8[[i]]$Value),8))
+
+print(rowSums(table8[[i]],na.rm = TRUE))
+}
+
+```
+
+```{r table 9}
+
+vol_9 <- InputVol[[9]]
+tar_9 <- Targets[[9]]
+percent_9 <- percent_list[[9]]
+
+table9 <- OD_Bal(volume_list = vol_9, percent = percent_9, target_list = tar_9)
+
+for(i in c(1:20)){
+print(round(sum(colSums(apply(table9[[i]],2,function(x) x*vol_9[[i]]$InputVol), na.rm = TRUE)-tar_9[[i]]$Value),9))
+
+print(rowSums(table9[[i]],na.rm = TRUE))
+}
+
+```
+
+```{r table 10}
+
+vol_10 <- InputVol[[10]]
+tar_10 <- Targets[[10]]
+percent_10 <- percent_list[[10]]
+
+table10 <- OD_Bal(volume_list = vol_10, percent = percent_10, target_list = tar_10)
+
+for(i in c(1:20)){
+print(round(sum(colSums(apply(table10[[i]],2,function(x) x*vol_10[[i]]$InputVol), na.rm = TRUE)-tar_10[[i]]$Value),10))
+
+print(rowSums(table10[[i]],na.rm = TRUE))
+}
+
+```
+
+```{r table 11}
+
+vol_11 <- InputVol[[11]]
+tar_11 <- Targets[[11]]
+percent_11 <- percent_list[[11]]
+
+table11 <- OD_Bal(volume_list = vol_11, percent = percent_11, target_list = tar_11)
+
+```
