@@ -208,8 +208,8 @@ $(document).ready(function () {
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">knitr<span class="op">::</span>opts_knit<span class="op">$</span><span class="kw">set</span>(<span class="dt">root.dir =</span> <span class="st">&quot;C:/Users/dgallen/Desktop/Projects/OD balance/OD&quot;</span>)
 <span class="kw">getwd</span>()</code></pre></div>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiSDovUHJvamVjdHMvMTEwMDAvMTExNTUvVHJhZmZTdHVkeS9PcGVyYXRpb25BbmFseXNpcy9WSVNTSU0vRXhpc3RpbmcgQ29uZGl0aW9ucy8wNSBGcmVld2F5IFZvbHVtZXNcIlxuIn0= -->
-<pre><code>[1] &quot;H:/Projects/11000/11155/TraffStudy/OperationAnalysis/VISSIM/Existing Conditions/05 Freeway Volumes&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiQzovVXNlcnMvZGdhbGxlbi9EZXNrdG9wL1Byb2plY3RzL09EIGJhbGFuY2UvT0RcIlxuIn0= -->
+<pre><code>[1] &quot;C:/Users/dgallen/Desktop/Projects/OD balance/OD&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShyZWFkeGwpXG5gYGAifQ== -->
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(readxl)</code></pre></div>
@@ -218,81 +218,93 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZm9yKG4gaW4gMTpsZW5ndGgobGV2ZWxzKGFzLmZhY3RvcihUYXJnZXQkVGFibGUpKSkpIHtcbiAgZyA8LSBUYXJnZXRbVGFyZ2V0JFRhYmxlPT1uLF1cbiAgdGFiIDwtIHNwbGl0KGcscGFzdGUoXCJUUFwiLGckVGltZVBlcmlvZCxzZXA9JycpKVxuICBsaXN0W1tuXV0gPC0gdGFiXG59XG5cbmBgYCJ9 -->
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span>(n <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(<span class="kw">levels</span>(<span class="kw">as.factor</span>(Target<span class="op">$</span>Table)))) {
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm0obGlzdCA9IGxzKCkpXG5yZWFkX2V4Y2VsX3NoZWV0cyA8LSBmdW5jdGlvbihmaWxlKXtcbiAgXG4gIHNoZWV0cyA8LSByZWFkeGw6OmV4Y2VsX3NoZWV0cyhcIlRhYmxlUGVyY2VudHNfc3BsaXQueGxzeFwiKVxuICB4IDwtIGxhcHBseShzaGVldHMsIGZ1bmN0aW9uKHgpIHJlYWR4bDo6cmVhZF94bHN4KFwiVGFibGVQZXJjZW50c19zcGxpdC54bHN4XCIsIHNoZWV0ID0geCxjb2xfbmFtZXMgPSBGQUxTRSwgbmEgPSAnTkEnKSlcbiAgeCA8LSBsYXBwbHkoeCwgYXMubWF0cml4KVxuICBuYW1lcyh4KSA8LSBzaGVldHNcbiAgeFxufVxucGVyY2VudF9saXN0IDwtIHJlYWRfZXhjZWxfc2hlZXRzKFwiVGFibGVQZXJjZW50c19zcGxpdC54bHN4XCIpXG5JbnB1dFZvbHVtZSA8LSByZWFkLmNzdignSW5wdXRWb2xzLmNzdicpXG5JbnB1dFZvbCA8LSBsaXN0KClcbmZvcihuIGluIDE6bGVuZ3RoKGxldmVscyhhcy5mYWN0b3IoSW5wdXRWb2x1bWUkVGFibGUpKSkpIHtcbiAgZyA8LSBJbnB1dFZvbHVtZVtJbnB1dFZvbHVtZSRUYWJsZT09bixdXG4gIHRhYiA8LSBzcGxpdChnLHBhc3RlKFwiVFBcIixnJFRpbWVQZXJpb2Qsc2VwPScnKSlcbiAgSW5wdXRWb2xbW25dXSA8LSB0YWJcbn1cblRhcmdldCA8LSByZWFkLmNzdignVGFyZ2V0Vm9scy5jc3YnKVxuVGFyZ2V0cyA8LSBsaXN0KClcbmZvcihuIGluIDE6bGVuZ3RoKGxldmVscyhhcy5mYWN0b3IoVGFyZ2V0JFRhYmxlKSkpKSB7XG4gIGcgPC0gVGFyZ2V0W1RhcmdldCRUYWJsZT09bixdXG4gIHRhYiA8LSBzcGxpdChnLHBhc3RlKFwiVFBcIixnJFRpbWVQZXJpb2Qsc2VwPScnKSlcbiAgVGFyZ2V0c1tbbl1dIDwtIHRhYlxufVxuYGBgIn0= -->
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rm</span>(<span class="dt">list =</span> <span class="kw">ls</span>())
+read_excel_sheets &lt;-<span class="st"> </span><span class="cf">function</span>(file){
+  
+  sheets &lt;-<span class="st"> </span>readxl<span class="op">::</span><span class="kw">excel_sheets</span>(<span class="st">&quot;TablePercents_split.xlsx&quot;</span>)
+  x &lt;-<span class="st"> </span><span class="kw">lapply</span>(sheets, <span class="cf">function</span>(x) readxl<span class="op">::</span><span class="kw">read_xlsx</span>(<span class="st">&quot;TablePercents_split.xlsx&quot;</span>, <span class="dt">sheet =</span> x,<span class="dt">col_names =</span> <span class="ot">FALSE</span>, <span class="dt">na =</span> <span class="st">'NA'</span>))
+  x &lt;-<span class="st"> </span><span class="kw">lapply</span>(x, as.matrix)
+  <span class="kw">names</span>(x) &lt;-<span class="st"> </span>sheets
+  x
+}
+percent_list &lt;-<span class="st"> </span><span class="kw">read_excel_sheets</span>(<span class="st">&quot;TablePercents_split.xlsx&quot;</span>)
+InputVolume &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'InputVols.csv'</span>)
+InputVol &lt;-<span class="st"> </span><span class="kw">list</span>()
+<span class="cf">for</span>(n <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(<span class="kw">levels</span>(<span class="kw">as.factor</span>(InputVolume<span class="op">$</span>Table)))) {
+  g &lt;-<span class="st"> </span>InputVolume[InputVolume<span class="op">$</span>Table<span class="op">==</span>n,]
+  tab &lt;-<span class="st"> </span><span class="kw">split</span>(g,<span class="kw">paste</span>(<span class="st">&quot;TP&quot;</span>,g<span class="op">$</span>TimePeriod,<span class="dt">sep=</span><span class="st">''</span>))
+  InputVol[[n]] &lt;-<span class="st"> </span>tab
+}
+Target &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'TargetVols.csv'</span>)
+Targets &lt;-<span class="st"> </span><span class="kw">list</span>()
+<span class="cf">for</span>(n <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(<span class="kw">levels</span>(<span class="kw">as.factor</span>(Target<span class="op">$</span>Table)))) {
   g &lt;-<span class="st"> </span>Target[Target<span class="op">$</span>Table<span class="op">==</span>n,]
   tab &lt;-<span class="st"> </span><span class="kw">split</span>(g,<span class="kw">paste</span>(<span class="st">&quot;TP&quot;</span>,g<span class="op">$</span>TimePeriod,<span class="dt">sep=</span><span class="st">''</span>))
-  list[[n]] &lt;-<span class="st"> </span>tab
+  Targets[[n]] &lt;-<span class="st"> </span>tab
 }</code></pre></div>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXJyb3IgaW4gbGlzdFtbbl1dIDwtIHRhYiA6IG9iamVjdCBvZiB0eXBlICdidWlsdGluJyBpcyBub3Qgc3Vic2V0dGFibGVcbiJ9 -->
-<pre><code>Error in list[[n]] &lt;- tab : object of type 'builtin' is not subsettable</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5zdW0odGFyZ2V0KSA9PSBzdW0odm9sdW1lKVxuXG5PRF9CYWwgPC0gZnVuY3Rpb24odm9sdW1lLHBlcmNlbnQsdGFyZ2V0KXtcblxuY29sX2ZpeCA8LSBmdW5jdGlvbih2b2x1bWUscGVyY2VudCx0YXJnZXQpIHtcbiAgXG4gIGNvbF9ubyA8LSBuY29sKHBlcmNlbnQpXG4gIHJvd19ubyA8LSBucm93KHBlcmNlbnQpXG4gIFxuICAjIyBzZXR1cCBhIG1hdHJpeCB0byBob2xkIHRoZSByZXN1bHRzXG4gIGogPC0gbWF0cml4KG5yb3cgPSByb3dfbm8sIG5jb2wgPSBjb2xfbm8pXG4gIFxuICBcbiAgZm9yKG4gaW4gYygxOmNvbF9ubykpIHtcbiAgICBcbiAgICB4IDwtIHBlcmNlbnRbLG5dXG4gICAgXG4gICAgY250IDwtIDFcbiAgICAjIGl0ciA8LSAxXG4gICAgXG4gICAgIyNyZXBlYXQgbG9vcCB3aWxsIHN0b3Agb24gZ2l2ZW4gaWYgY29tbWFuZCAtIHNlZSBiZWxvd1xuICAgIHJlcGVhdCB7XG4gICAgICB4W2NudF0gPC0gaWZlbHNlKHhbY250XSA8PSAuMDEsXG4gICAgICAgICAgICAgICAgICAgICAgIHhbY250XSxcbiAgICAgICAgICAgICAgICAgICAgICAgaWZlbHNlKHhbY250XSA+PSAuOTksXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICB4W2NudF0sXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICBpZmVsc2Uoc3VtKHgqdm9sdW1lLCBuYS5ybSA9IFQpLXRhcmdldFtuXSA8IDAsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgeFtjbnRdICsgLjAxLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHhbY250XSAtIC4wMSkpKVxuICAgICAgXG4gICAgICBjbnQgPC0gaWZlbHNlKGNudCA9PSByb3dfbm8sIDEsIGNudCArIDEpXG4gICAgICAjIGl0ciA8LSBpdHIgKyAxXG4gICAgICBcbiAgICAgICMjaWYgdG90YWwgY2FycyBhcmUgbGVzcyB0aGFuIDUgXCJicmVha1wiIHRoZSBsb29wXG4gICAgICBpZihhYnMoc3VtKHggKiB2b2x1bWUsIG5hLnJtID0gVCkgLSB0YXJnZXRbbl0pIDwgNSkge1xuICAgICAgICBicmVha1xuICAgICAgfVxuICAgIH1cbiAgICBqWyxuXSA8LSB4XG4gIH1cbiAgcmV0dXJuKGopXG59XG5cbnNjIDwtIHNjcmFtYmxlKHZvbHVtZSA9IHZvbHVtZSwgcGVyY2VudCA9IHBlcmNlbnQsIHRhcmdldCA9IHRhcmdldClcblxucGVyY2VudF9maXggPC0gZnVuY3Rpb24oZGF0LHRhcmdldCx2b2x1bWUpe1xuICBcbiAgY29sX25vIDwtIG5jb2woZGF0KVxuICByb3dfbm8gPC0gbnJvdyhkYXQpXG4gIGogPC0gbWF0cml4KG5yb3cgPSByb3dfbm8sIG5jb2wgPSBjb2xfbm8pXG4gIFxuICBmb3IobiBpbiBjKDE6cm93X25vKSl7XG4gICAgXG4gICAgeSA8LSBkYXRbbixdXG5cbiAgICByZXBlYXQge1xuICAgICAgXG4gICAgICBjb2xfZGlmZiA8LSBjb2xTdW1zKGFwcGx5KGRhdCwyLGZ1bmN0aW9uKHgpIHgqdm9sdW1lKSktdGFyZ2V0XG4gICAgICByb3dfc3VtIDwtIHN1bSh5KVxuICAgICAgXG4gICAgICBpbmRleDEgPC0gMVxuICAgICAgXG4gICAgICByZXBlYXQge1xuICAgICAgICBcbiAgICAgICAgbWluX2NvbCA8LSBtYXRjaChzb3J0KGNvbF9kaWZmKVtpbmRleDFdLGNvbF9kaWZmKVxuICAgICAgICBpbmRleDEgPC0gaW5kZXgxICsgMVxuICAgICAgICBcbiAgICAgICAgaWYoeVttaW5fY29sXSA+PSAwLjAxICYgeVttaW5fY29sXSA8PSAwLjk5IHwgYW55KHkgPT0gMSkpe1xuICAgICAgICAgIGJyZWFrXG4gICAgICAgIH1cbiAgICAgIH1cblxuICAgICAgaW5kZXgyIDwtIDFcbiAgICAgIHJlcGVhdCB7XG4gICAgICAgIFxuICAgICAgICBtYXhfY29sIDwtIG1hdGNoKHNvcnQoY29sX2RpZmYsZGVjcmVhc2luZyA9IFRSVUUpW2luZGV4Ml0sY29sX2RpZmYpXG4gICAgICAgIGluZGV4MiA8LSBpbmRleDIgKyAxXG4gICAgICAgIFxuICAgICAgICBpZih5W21heF9jb2xdID49IDAuMDEgJiB5W21heF9jb2xdIDw9IDAuOTkgfCBhbnkoeSA9PSAxKSl7XG4gICAgICAgICAgYnJlYWtcbiAgICAgICAgfVxuICAgICAgfVxuICAgICAgXG4gICAgICBtaW5fY29sX2luZGV4IDwtIG1pbl9jb2xcbiAgICAgIG1heF9jb2xfaW5kZXggPC0gbWF4X2NvbFxuICAgICAgeCA8LSBpZmVsc2Uocm93X3N1bSA8IDEsIFxuICAgICAgICAgICAgICAgICAgbWluX2NvbF9pbmRleCwgXG4gICAgICAgICAgICAgICAgICBtYXhfY29sX2luZGV4KVxuICAgICAgXG4gICAgICB5W3hdIDwtIGlmZWxzZShhbnkoeSA9PSAxKSx5W3hdLFxuICAgICAgICAgICAgICAgICAgICAgaWZlbHNlKHN1bSh5KSA8IDEsIHlbeF0gKyAuMDEsIHlbeF0gLSAuMDEpKVxuICAgICAgXG4gICAgICBkYXRbbixdIDwtIHlcbiAgICAgIFxuICAgICAgaWYoc3VtKHkpID49IDAuOTkgJiBzdW0oeSkgPD0gMS4wMSkge1xuICAgICAgICBicmVha1xuICAgICAgfVxuICAgIH1cbiAgfVxucmV0dXJuKGRhdClcbn1cblxucm93X2ZpeCA8LSBwZXJjZW50X2ZpeChjb2xfZml4ID0gY29sX2ZpeCwgdGFyZ2V0ID0gdGFyZ2V0LHZvbHVtZSA9IHZvbHVtZSlcblxucG9ycG9ydGlvbiA8LSBmdW5jdGlvbihwZXJjZW50LHZvbHVtZSkge1xuICBcbiAgZGF0X25ldyA8LSBhcHBseShwZXJjZW50LDIsZnVuY3Rpb24oeCkgeCAqIHZvbHVtZSlcbiAgXG4gICMgcm91bmQoYXBwbHkoZGF0LDIsZnVuY3Rpb24oeCkgeCAqIHZvbHVtZSksMClcbiAgXG4gIFxuICBzdW1fY29sIDwtIGNvbFN1bXMoZGF0X25ldylcbiAgXG4gIHBvcnBvcnRpb24gPC0gbWFwcGx5KGZ1bmN0aW9uKHgpIHtkYXRfbmV3Wyx4XS9zdW1fY29sW3hdfSxcbiAgICAgICAgICAgICAgICAgICAgICAgeCA9IGMoMTpuY29sKGRhdF9uZXcpKSlcbiAgXG4gIGNvbF9kaWZmIDwtIHN1bV9jb2wtdGFyZ2V0XG4gIFxuICBwcm9wX2RpZmYgPC0gbWFwcGx5KGZ1bmN0aW9uKHgpIHtwb3Jwb3J0aW9uWyx4XSpjb2xfZGlmZlt4XX0sXG4gICAgICAgICAgICAgICAgICAgICAgeCA9IGMoMTpuY29sKHBvcnBvcnRpb24pKSlcbiAgXG4gIGRpZmYgPC0gbWFwcGx5KGZ1bmN0aW9uKHgpIHtpZmVsc2UoaXMubmEocHJvcF9kaWZmWyx4XS92b2x1bWUpLHByb3BfZGlmZlsseF0scHJvcF9kaWZmWyx4XS92b2x1bWUpfSxcbiAgICAgICAgICAgICAgICAgeCA9IGMoMTpuY29sKHByb3BfZGlmZikpKVxuICBcbiAgayA8LSBwZXJjZW50IC0gZGlmZlxuICBcbiAgZGF0X2ZpbmFsIDwtIGtcbiAgZGF0X2ZpbmFsWyxuY29sKGRhdF9maW5hbCldIDwtIGtbLG5jb2woayldIC0gKHJvd1N1bXMoayktMSlcbiAgXG4gIHJldHVybihkYXRfZmluYWwpXG59XG5cbmZpbmFsX2RhdGEgPC0gcG9ycG9ydGlvbihwZXJjZW50ID0gcm93X2ZpeCwgdm9sdW1lID0gdm9sdW1lKVxuXG5cblxufVxuYGBgIn0= -->
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">
-<span class="kw">sum</span>(target) <span class="op">==</span><span class="st"> </span><span class="kw">sum</span>(volume)
-
-OD_Bal &lt;-<span class="st"> </span><span class="cf">function</span>(volume,percent,target){
-
-col_fix &lt;-<span class="st"> </span><span class="cf">function</span>(volume,percent,target) {
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudm9sXzMgPC0gSW5wdXRWb2xbWzNdXVxudGFyXzMgPC0gVGFyZ2V0c1tbM11dXG5wZXJjZW50XzMgPC0gcGVyY2VudF9saXN0W1szXV1cbk9EX0JhbCA8LSBmdW5jdGlvbih2b2x1bWVfbGlzdCxwZXJjZW50LHRhcmdldF9saXN0KXtcbiAgXG4gIHRhYmxlX2xpc3QgPC0gbGlzdCgpXG4gIFxuICBmb3IoaSBpbiBjKDE6bGVuZ3RoKHZvbHVtZV9saXN0KSkpe1xuICAgIFxuICAgIHZvbHVtZSA8LSB2b2xfM1tbaV1dJElucHV0Vm9sXG4gICAgdGFyZ2V0IDwtIHRhcl8zW1tpXV0kVmFsdWVcbiAgICBcbiAgICAjIGNvbF9maXggPC0gZnVuY3Rpb24odm9sdW1lLHBlcmNlbnQsdGFyZ2V0KSB7XG4gICAgXG4gICAgY29sX25vIDwtIG5jb2wocGVyY2VudClcbiAgICByb3dfbm8gPC0gbnJvdyhwZXJjZW50KVxuICAgIFxuICAgICMjIHNldHVwIGEgbWF0cml4IHRvIGhvbGQgdGhlIHJlc3VsdHNcbiAgICBkYXQgPC0gbWF0cml4KG5yb3cgPSByb3dfbm8sIG5jb2wgPSBjb2xfbm8pXG4gICAgXG4gICAgXG4gICAgZm9yKG4gaW4gYygxOmNvbF9ubykpIHtcbiAgICAgIFxuICAgICAgeCA8LSBwZXJjZW50WyxuXVxuICAgICAgXG4gICAgICBjbnQgPC0gMVxuICAgICAgIyBpdHIgPC0gMVxuICAgICAgXG4gICAgICAjI3JlcGVhdCBsb29wIHdpbGwgc3RvcCBvbiBnaXZlbiBpZiBjb21tYW5kIC0gc2VlIGJlbG93XG4gICAgICByZXBlYXQge1xuICAgICAgICB4W2NudF0gPC0gaWZlbHNlKHN1bSh4KnZvbHVtZSwgbmEucm0gPSBUKS10YXJnZXRbbl0gPCAwLFxuICAgICAgICAgICAgICAgICAgICAgICAgIChpZmVsc2UoeFtjbnRdID49IC45OSxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHhbY250XSx4W2NudF0gKyAuMDEpKSxcbiAgICAgICAgICAgICAgICAgICAgICAgICAoaWZlbHNlKHhbY250XSA8PSAuMDEsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB4W2NudF0seFtjbnRdIC0gLjAxKSkpXG4gICAgICAgIFxuICAgICAgICBjbnQgPC0gaWZlbHNlKGNudCA9PSByb3dfbm8sIDEsIGNudCArIDEpXG4gICAgICAgICMgaXRyIDwtIGl0ciArIDFcbiAgICAgICAgXG4gICAgICAgICMjaWYgdG90YWwgY2FycyBhcmUgbGVzcyB0aGFuIDUgXCJicmVha1wiIHRoZSBsb29wXG4gICAgICAgIGlmKGFicyhzdW0oeCAqIHZvbHVtZSwgbmEucm0gPSBUKSAtIHRhcmdldFtuXSkgPCA1KSB7XG4gICAgICAgICAgYnJlYWtcbiAgICAgICAgfVxuICAgICAgfVxuICAgICAgZGF0WyxuXSA8LSB4XG4gICAgfVxuICAgIFxuICAgIGRhdF8yIDwtIGRhdFxuICAgIFxuICAgIGZvcihuIGluIGMoMTpyb3dfbm8pKXtcbiAgICBcbiAgICB5IDwtIGRhdF8yW24sXVxuICAgIHJlcGVhdCB7XG4gICAgICBcbiAgICAgIGNvbF9kaWZmIDwtIGNvbFN1bXMoYXBwbHkoZGF0XzIsMixmdW5jdGlvbih4KSB4KnZvbHVtZSksIG5hLnJtID0gVFJVRSktdGFyZ2V0XG4gICAgICByb3dfc3VtIDwtIHN1bSh5LCBuYS5ybSA9IFRSVUUpXG4gICAgICBcbiAgICAgIGluZGV4MSA8LSAxXG4gICAgICBcbiAgICAgIHJlcGVhdCB7XG4gICAgICAgIFxuICAgICAgICBtaW5fY29sIDwtIG1hdGNoKHNvcnQoY29sX2RpZmYpW2luZGV4MV0sY29sX2RpZmYpXG4gICAgICAgIGluZGV4MSA8LSBpbmRleDEgKyAxXG4gICAgICAgIFxuICAgICAgbG9nMSA8LSAhaXMubmEoeVttaW5fY29sXSkgJiB5W21pbl9jb2xdID49IDAuMDEgJiB5W21pbl9jb2xdIDw9IDAuOTlcbiAgICAgIGxvZzIgPC0gIWlzLm5hKHlbbWluX2NvbF0pICYgeVttaW5fY29sXSA9PSAxXG4gICAgICBcbiAgICAgIGlmKGxvZzEgfCBsb2cyICl7XG4gICAgICAgICAgYnJlYWtcbiAgICAgICAgfVxuICAgICAgfVxuICAgICAgXG4gICAgICBpbmRleDIgPC0gMVxuICAgICAgXG4gICAgICByZXBlYXQge1xuICAgICAgICBcbiAgICAgICAgbWF4X2NvbCA8LSBtYXRjaChzb3J0KGNvbF9kaWZmLGRlY3JlYXNpbmcgPSBUUlVFKVtpbmRleDJdLGNvbF9kaWZmKVxuICAgICAgICBpbmRleDIgPC0gaW5kZXgyICsgMVxuICAgICAgICBcbiAgICAgICAgbG9nMSA8LSAhaXMubmEoeVttYXhfY29sXSkgJiB5W21heF9jb2xdID49IDAuMDEgJiB5W21heF9jb2xdIDw9IDAuOTlcbiAgICAgICAgbG9nMiA8LSAhaXMubmEoeVttYXhfY29sXSkgJiB5W21heF9jb2xdID09IDFcbiAgICAgICAgXG4gICAgICAgIGlmKGxvZzEgfCBsb2cyICl7XG4gICAgICAgICAgYnJlYWtcbiAgICAgICAgfVxuICAgICAgfVxuICAgICAgXG4gICAgICB4IDwtIGlmZWxzZShyb3dfc3VtIDwgMSwgXG4gICAgICAgICAgICAgICAgICBtaW5fY29sLCBcbiAgICAgICAgICAgICAgICAgIG1heF9jb2wpXG4gICAgICBcbiAgICAgIHlbeF0gPC0gaWZlbHNlKHN1bSh5LCBuYS5ybSA9IFRSVUUpID49IDAuOTkgJiBzdW0oeSwgbmEucm0gPSBUUlVFKSA8PSAxLjAxLFxuICAgICAgICAgICAgICAgICAgICAgXG4gICAgICAgICAgICAgICAgICAgICB5W3hdLFxuICAgICAgICAgICAgICAgICAgICAgXG4gICAgICAgICAgICAgICAgICAgICBpZmVsc2Uoc3VtKHksIG5hLnJtID0gVFJVRSkgPCAxLCBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICB5W3hdICsgLjAwMSxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICB5W3hdIC0gLjAwMSkpXG4gICAgICBcbiAgICAgIGRhdF8yW24sXSA8LSB5XG4gICAgICBcbiAgICAgIGlmKHN1bSh5LG5hLnJtID0gVFJVRSkgPj0gMC45OSAmIHN1bSh5LG5hLnJtID0gVFJVRSkgPD0gMS4wMSkge1xuICAgICAgICBicmVha1xuICAgICAgICB9XG4gICAgICB9XG4gICAgfVxuICAgIFxuICAgICMgcm93X2ZpeCA8LSBwZXJjZW50X2ZpeChjb2xfZml4ID0gY29sX2ZpeCwgdGFyZ2V0ID0gdGFyZ2V0LHZvbHVtZSA9IHZvbHVtZSlcbiAgICAjIFxuICAgICMgcG9ycG9ydGlvbiA8LSBmdW5jdGlvbihwZXJjZW50LHZvbHVtZSkge1xuICAgIFxuICAgIHZvbF9uZXcgPC0gYXBwbHkoZGF0XzIsMixmdW5jdGlvbih4KSB4ICogdm9sdW1lKVxuICAgIFxuICAgICMgcm91bmQoYXBwbHkoZGF0LDIsZnVuY3Rpb24oeCkgeCAqIHZvbHVtZSksMClcbiAgICBcbiAgICBzdW1fY29sIDwtIGNvbFN1bXModm9sX25ldywgbmEucm0gPSBUUlVFKVxuICAgIFxuICAgIHBvcnBvcnRpb24gPC0gbWFwcGx5KGZ1bmN0aW9uKHgpIHt2b2xfbmV3Wyx4XS9zdW1fY29sW3hdfSxcbiAgICAgICAgICAgICAgICAgICAgICAgICB4ID0gYygxOm5jb2wodm9sX25ldykpKVxuICAgIFxuICAgIGNvbF9kaWZmIDwtIHN1bV9jb2wtdGFyZ2V0XG4gICAgXG4gICAgcHJvcF9kaWZmIDwtIG1hcHBseShmdW5jdGlvbih4KSB7cG9ycG9ydGlvblsseF0qY29sX2RpZmZbeF19LFxuICAgICAgICAgICAgICAgICAgICAgICAgeCA9IGMoMTpuY29sKHBvcnBvcnRpb24pKSlcbiAgICBcbiAgICBkaWZmIDwtIG1hcHBseShmdW5jdGlvbih4KSB7aWZlbHNlKGlzLm5hKHByb3BfZGlmZlsseF0vdm9sdW1lKSxwcm9wX2RpZmZbLHhdLHByb3BfZGlmZlsseF0vdm9sdW1lKX0sXG4gICAgICAgICAgICAgICAgICAgeCA9IGMoMTpuY29sKHByb3BfZGlmZikpKVxuICAgIFxuICAgIGsgPC0gZGF0XzIgLSBkaWZmXG4gICAgXG4gICAgZGF0X2ZpbmFsIDwtIGtcbiAgZGF0X2ZpbmFsWyxuY29sKGRhdF9maW5hbCldIDwtIGtbLG5jb2woayldIC0gKHJvd1N1bXMoaywgbmEucm0gPSBUUlVFKS0xKVxuICBcbiAgdGFibGVfbGlzdFtbaV1dIDwtIGRhdF9maW5hbCBcbiAgXG4gIH1cbiAgcmV0dXJuKHRhYmxlX2xpc3QpXG59XG5gYGAifQ== -->
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">vol_<span class="dv">3</span> &lt;-<span class="st"> </span>InputVol[[<span class="dv">3</span>]]
+tar_<span class="dv">3</span> &lt;-<span class="st"> </span>Targets[[<span class="dv">3</span>]]
+percent_<span class="dv">3</span> &lt;-<span class="st"> </span>percent_list[[<span class="dv">3</span>]]
+OD_Bal &lt;-<span class="st"> </span><span class="cf">function</span>(volume_list,percent,target_list){
   
-  col_no &lt;-<span class="st"> </span><span class="kw">ncol</span>(percent)
-  row_no &lt;-<span class="st"> </span><span class="kw">nrow</span>(percent)
+  table_list &lt;-<span class="st"> </span><span class="kw">list</span>()
   
-  ## setup a matrix to hold the results
-  j &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> row_no, <span class="dt">ncol =</span> col_no)
-  
-  
-  <span class="cf">for</span>(n <span class="cf">in</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>col_no)) {
+  <span class="cf">for</span>(i <span class="cf">in</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(volume_list))){
     
-    x &lt;-<span class="st"> </span>percent[,n]
+    volume &lt;-<span class="st"> </span>vol_<span class="dv">3</span>[[i]]<span class="op">$</span>InputVol
+    target &lt;-<span class="st"> </span>tar_<span class="dv">3</span>[[i]]<span class="op">$</span>Value
     
-    cnt &lt;-<span class="st"> </span><span class="dv">1</span>
-    <span class="co"># itr &lt;- 1</span>
+    <span class="co"># col_fix &lt;- function(volume,percent,target) {</span>
     
-    ##repeat loop will stop on given if command - see below
-    <span class="cf">repeat</span> {
-      x[cnt] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(x[cnt] <span class="op">&lt;=</span><span class="st"> </span>.<span class="dv">01</span>,
-                       x[cnt],
-                       <span class="kw">ifelse</span>(x[cnt] <span class="op">&gt;=</span><span class="st"> </span>.<span class="dv">99</span>,
-                              x[cnt],
-                              <span class="kw">ifelse</span>(<span class="kw">sum</span>(x<span class="op">*</span>volume, <span class="dt">na.rm =</span> T)<span class="op">-</span>target[n] <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span>,
-                                     x[cnt] <span class="op">+</span><span class="st"> </span>.<span class="dv">01</span>,
-                                     x[cnt] <span class="op">-</span><span class="st"> </span>.<span class="dv">01</span>)))
+    col_no &lt;-<span class="st"> </span><span class="kw">ncol</span>(percent)
+    row_no &lt;-<span class="st"> </span><span class="kw">nrow</span>(percent)
+    
+    ## setup a matrix to hold the results
+    dat &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> row_no, <span class="dt">ncol =</span> col_no)
+    
+    
+    <span class="cf">for</span>(n <span class="cf">in</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>col_no)) {
       
-      cnt &lt;-<span class="st"> </span><span class="kw">ifelse</span>(cnt <span class="op">==</span><span class="st"> </span>row_no, <span class="dv">1</span>, cnt <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)
-      <span class="co"># itr &lt;- itr + 1</span>
+      x &lt;-<span class="st"> </span>percent[,n]
       
-      ##if total cars are less than 5 &quot;break&quot; the loop
-      <span class="cf">if</span>(<span class="kw">abs</span>(<span class="kw">sum</span>(x <span class="op">*</span><span class="st"> </span>volume, <span class="dt">na.rm =</span> T) <span class="op">-</span><span class="st"> </span>target[n]) <span class="op">&lt;</span><span class="st"> </span><span class="dv">5</span>) {
-        <span class="cf">break</span>
+      cnt &lt;-<span class="st"> </span><span class="dv">1</span>
+      <span class="co"># itr &lt;- 1</span>
+      
+      ##repeat loop will stop on given if command - see below
+      <span class="cf">repeat</span> {
+        x[cnt] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">sum</span>(x<span class="op">*</span>volume, <span class="dt">na.rm =</span> T)<span class="op">-</span>target[n] <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span>,
+                         (<span class="kw">ifelse</span>(x[cnt] <span class="op">&gt;=</span><span class="st"> </span>.<span class="dv">99</span>,
+                                 x[cnt],x[cnt] <span class="op">+</span><span class="st"> </span>.<span class="dv">01</span>)),
+                         (<span class="kw">ifelse</span>(x[cnt] <span class="op">&lt;=</span><span class="st"> </span>.<span class="dv">01</span>,
+                                 x[cnt],x[cnt] <span class="op">-</span><span class="st"> </span>.<span class="dv">01</span>)))
+        
+        cnt &lt;-<span class="st"> </span><span class="kw">ifelse</span>(cnt <span class="op">==</span><span class="st"> </span>row_no, <span class="dv">1</span>, cnt <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)
+        <span class="co"># itr &lt;- itr + 1</span>
+        
+        ##if total cars are less than 5 &quot;break&quot; the loop
+        <span class="cf">if</span>(<span class="kw">abs</span>(<span class="kw">sum</span>(x <span class="op">*</span><span class="st"> </span>volume, <span class="dt">na.rm =</span> T) <span class="op">-</span><span class="st"> </span>target[n]) <span class="op">&lt;</span><span class="st"> </span><span class="dv">5</span>) {
+          <span class="cf">break</span>
+        }
       }
+      dat[,n] &lt;-<span class="st"> </span>x
     }
-    j[,n] &lt;-<span class="st"> </span>x
-  }
-  <span class="kw">return</span>(j)
-}
-
-sc &lt;-<span class="st"> </span><span class="kw">scramble</span>(<span class="dt">volume =</span> volume, <span class="dt">percent =</span> percent, <span class="dt">target =</span> target)
-
-percent_fix &lt;-<span class="st"> </span><span class="cf">function</span>(dat,target,volume){
-  
-  col_no &lt;-<span class="st"> </span><span class="kw">ncol</span>(dat)
-  row_no &lt;-<span class="st"> </span><span class="kw">nrow</span>(dat)
-  j &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dt">nrow =</span> row_no, <span class="dt">ncol =</span> col_no)
-  
-  <span class="cf">for</span>(n <span class="cf">in</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>row_no)){
     
-    y &lt;-<span class="st"> </span>dat[n,]
-
+    dat_<span class="dv">2</span> &lt;-<span class="st"> </span>dat
+    
+    <span class="cf">for</span>(n <span class="cf">in</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>row_no)){
+    
+    y &lt;-<span class="st"> </span>dat_<span class="dv">2</span>[n,]
     <span class="cf">repeat</span> {
       
-      col_diff &lt;-<span class="st"> </span><span class="kw">colSums</span>(<span class="kw">apply</span>(dat,<span class="dv">2</span>,<span class="cf">function</span>(x) x<span class="op">*</span>volume))<span class="op">-</span>target
-      row_sum &lt;-<span class="st"> </span><span class="kw">sum</span>(y)
+      col_diff &lt;-<span class="st"> </span><span class="kw">colSums</span>(<span class="kw">apply</span>(dat_<span class="dv">2</span>,<span class="dv">2</span>,<span class="cf">function</span>(x) x<span class="op">*</span>volume), <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)<span class="op">-</span>target
+      row_sum &lt;-<span class="st"> </span><span class="kw">sum</span>(y, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
       
       index1 &lt;-<span class="st"> </span><span class="dv">1</span>
       
@@ -301,80 +313,97 @@ percent_fix &lt;-<span class="st"> </span><span class="cf">function</span>(dat,t
         min_col &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">sort</span>(col_diff)[index1],col_diff)
         index1 &lt;-<span class="st"> </span>index1 <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
         
-        <span class="cf">if</span>(y[min_col] <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.01</span> <span class="op">&amp;</span><span class="st"> </span>y[min_col] <span class="op">&lt;=</span><span class="st"> </span><span class="fl">0.99</span> <span class="op">|</span><span class="st"> </span><span class="kw">any</span>(y <span class="op">==</span><span class="st"> </span><span class="dv">1</span>)){
+      log1 &lt;-<span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(y[min_col]) <span class="op">&amp;</span><span class="st"> </span>y[min_col] <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.01</span> <span class="op">&amp;</span><span class="st"> </span>y[min_col] <span class="op">&lt;=</span><span class="st"> </span><span class="fl">0.99</span>
+      log2 &lt;-<span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(y[min_col]) <span class="op">&amp;</span><span class="st"> </span>y[min_col] <span class="op">==</span><span class="st"> </span><span class="dv">1</span>
+      
+      <span class="cf">if</span>(log1 <span class="op">|</span><span class="st"> </span>log2 ){
           <span class="cf">break</span>
         }
       }
-
+      
       index2 &lt;-<span class="st"> </span><span class="dv">1</span>
+      
       <span class="cf">repeat</span> {
         
         max_col &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">sort</span>(col_diff,<span class="dt">decreasing =</span> <span class="ot">TRUE</span>)[index2],col_diff)
         index2 &lt;-<span class="st"> </span>index2 <span class="op">+</span><span class="st"> </span><span class="dv">1</span>
         
-        <span class="cf">if</span>(y[max_col] <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.01</span> <span class="op">&amp;</span><span class="st"> </span>y[max_col] <span class="op">&lt;=</span><span class="st"> </span><span class="fl">0.99</span> <span class="op">|</span><span class="st"> </span><span class="kw">any</span>(y <span class="op">==</span><span class="st"> </span><span class="dv">1</span>)){
+        log1 &lt;-<span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(y[max_col]) <span class="op">&amp;</span><span class="st"> </span>y[max_col] <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.01</span> <span class="op">&amp;</span><span class="st"> </span>y[max_col] <span class="op">&lt;=</span><span class="st"> </span><span class="fl">0.99</span>
+        log2 &lt;-<span class="st"> </span><span class="op">!</span><span class="kw">is.na</span>(y[max_col]) <span class="op">&amp;</span><span class="st"> </span>y[max_col] <span class="op">==</span><span class="st"> </span><span class="dv">1</span>
+        
+        <span class="cf">if</span>(log1 <span class="op">|</span><span class="st"> </span>log2 ){
           <span class="cf">break</span>
         }
       }
       
-      min_col_index &lt;-<span class="st"> </span>min_col
-      max_col_index &lt;-<span class="st"> </span>max_col
       x &lt;-<span class="st"> </span><span class="kw">ifelse</span>(row_sum <span class="op">&lt;</span><span class="st"> </span><span class="dv">1</span>, 
-                  min_col_index, 
-                  max_col_index)
+                  min_col, 
+                  max_col)
       
-      y[x] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">any</span>(y <span class="op">==</span><span class="st"> </span><span class="dv">1</span>),y[x],
-                     <span class="kw">ifelse</span>(<span class="kw">sum</span>(y) <span class="op">&lt;</span><span class="st"> </span><span class="dv">1</span>, y[x] <span class="op">+</span><span class="st"> </span>.<span class="dv">01</span>, y[x] <span class="op">-</span><span class="st"> </span>.<span class="dv">01</span>))
+      y[x] &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">sum</span>(y, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.99</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">sum</span>(y, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">&lt;=</span><span class="st"> </span><span class="fl">1.01</span>,
+                     
+                     y[x],
+                     
+                     <span class="kw">ifelse</span>(<span class="kw">sum</span>(y, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">&lt;</span><span class="st"> </span><span class="dv">1</span>, 
+                            y[x] <span class="op">+</span><span class="st"> </span>.<span class="dv">001</span>,
+                            y[x] <span class="op">-</span><span class="st"> </span>.<span class="dv">001</span>))
       
-      dat[n,] &lt;-<span class="st"> </span>y
+      dat_<span class="dv">2</span>[n,] &lt;-<span class="st"> </span>y
       
-      <span class="cf">if</span>(<span class="kw">sum</span>(y) <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.99</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">sum</span>(y) <span class="op">&lt;=</span><span class="st"> </span><span class="fl">1.01</span>) {
+      <span class="cf">if</span>(<span class="kw">sum</span>(y,<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.99</span> <span class="op">&amp;</span><span class="st"> </span><span class="kw">sum</span>(y,<span class="dt">na.rm =</span> <span class="ot">TRUE</span>) <span class="op">&lt;=</span><span class="st"> </span><span class="fl">1.01</span>) {
         <span class="cf">break</span>
+        }
       }
     }
+    
+    <span class="co"># row_fix &lt;- percent_fix(col_fix = col_fix, target = target,volume = volume)</span>
+    <span class="co"># </span>
+    <span class="co"># porportion &lt;- function(percent,volume) {</span>
+    
+    vol_new &lt;-<span class="st"> </span><span class="kw">apply</span>(dat_<span class="dv">2</span>,<span class="dv">2</span>,<span class="cf">function</span>(x) x <span class="op">*</span><span class="st"> </span>volume)
+    
+    <span class="co"># round(apply(dat,2,function(x) x * volume),0)</span>
+    
+    sum_col &lt;-<span class="st"> </span><span class="kw">colSums</span>(vol_new, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
+    
+    porportion &lt;-<span class="st"> </span><span class="kw">mapply</span>(<span class="cf">function</span>(x) {vol_new[,x]<span class="op">/</span>sum_col[x]},
+                         <span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(vol_new)))
+    
+    col_diff &lt;-<span class="st"> </span>sum_col<span class="op">-</span>target
+    
+    prop_diff &lt;-<span class="st"> </span><span class="kw">mapply</span>(<span class="cf">function</span>(x) {porportion[,x]<span class="op">*</span>col_diff[x]},
+                        <span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(porportion)))
+    
+    diff &lt;-<span class="st"> </span><span class="kw">mapply</span>(<span class="cf">function</span>(x) {<span class="kw">ifelse</span>(<span class="kw">is.na</span>(prop_diff[,x]<span class="op">/</span>volume),prop_diff[,x],prop_diff[,x]<span class="op">/</span>volume)},
+                   <span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(prop_diff)))
+    
+    k &lt;-<span class="st"> </span>dat_<span class="dv">2</span> <span class="op">-</span><span class="st"> </span>diff
+    
+    dat_final &lt;-<span class="st"> </span>k
+  dat_final[,<span class="kw">ncol</span>(dat_final)] &lt;-<span class="st"> </span>k[,<span class="kw">ncol</span>(k)] <span class="op">-</span><span class="st"> </span>(<span class="kw">rowSums</span>(k, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)<span class="op">-</span><span class="dv">1</span>)
+  
+  table_list[[i]] &lt;-<span class="st"> </span>dat_final 
+  
   }
-<span class="kw">return</span>(dat)
-}
-
-row_fix &lt;-<span class="st"> </span><span class="kw">percent_fix</span>(<span class="dt">col_fix =</span> col_fix, <span class="dt">target =</span> target,<span class="dt">volume =</span> volume)
-
-porportion &lt;-<span class="st"> </span><span class="cf">function</span>(percent,volume) {
-  
-  dat_new &lt;-<span class="st"> </span><span class="kw">apply</span>(percent,<span class="dv">2</span>,<span class="cf">function</span>(x) x <span class="op">*</span><span class="st"> </span>volume)
-  
-  <span class="co"># round(apply(dat,2,function(x) x * volume),0)</span>
-  
-  
-  sum_col &lt;-<span class="st"> </span><span class="kw">colSums</span>(dat_new)
-  
-  porportion &lt;-<span class="st"> </span><span class="kw">mapply</span>(<span class="cf">function</span>(x) {dat_new[,x]<span class="op">/</span>sum_col[x]},
-                       <span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(dat_new)))
-  
-  col_diff &lt;-<span class="st"> </span>sum_col<span class="op">-</span>target
-  
-  prop_diff &lt;-<span class="st"> </span><span class="kw">mapply</span>(<span class="cf">function</span>(x) {porportion[,x]<span class="op">*</span>col_diff[x]},
-                      <span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(porportion)))
-  
-  diff &lt;-<span class="st"> </span><span class="kw">mapply</span>(<span class="cf">function</span>(x) {<span class="kw">ifelse</span>(<span class="kw">is.na</span>(prop_diff[,x]<span class="op">/</span>volume),prop_diff[,x],prop_diff[,x]<span class="op">/</span>volume)},
-                 <span class="dt">x =</span> <span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(prop_diff)))
-  
-  k &lt;-<span class="st"> </span>percent <span class="op">-</span><span class="st"> </span>diff
-  
-  dat_final &lt;-<span class="st"> </span>k
-  dat_final[,<span class="kw">ncol</span>(dat_final)] &lt;-<span class="st"> </span>k[,<span class="kw">ncol</span>(k)] <span class="op">-</span><span class="st"> </span>(<span class="kw">rowSums</span>(k)<span class="op">-</span><span class="dv">1</span>)
-  
-  <span class="kw">return</span>(dat_final)
-}
-
-final_data &lt;-<span class="st"> </span><span class="kw">porportion</span>(<span class="dt">percent =</span> row_fix, <span class="dt">volume =</span> volume)
-
-
-
+  <span class="kw">return</span>(table_list)
 }</code></pre></div>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmluYWxfZGF0YSA8LSBkYXRfZmluYWxcbmZpbmFsX2RhdGFcbnJvd1N1bXMoZmluYWxfZGF0YSwgbmEucm0gPSBUUlVFKVxuY29sU3VtcyhhcHBseShmaW5hbF9kYXRhLDIsZnVuY3Rpb24oeCkgeCp2b2x1bWUpLG5hLnJtID0gVFJVRSktdGFyZ2V0XG5yb3VuZChkYXRfZmluYWwtcGVyY2VudCwzKVxuYGBgIn0= -->
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">final_data &lt;-<span class="st"> </span>dat_final
+final_data
+<span class="kw">rowSums</span>(final_data, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)
+<span class="kw">colSums</span>(<span class="kw">apply</span>(final_data,<span class="dv">2</span>,<span class="cf">function</span>(x) x<span class="op">*</span>volume),<span class="dt">na.rm =</span> <span class="ot">TRUE</span>)<span class="op">-</span>target
+<span class="kw">round</span>(dat_final<span class="op">-</span>percent,<span class="dv">3</span>)</code></pre></div>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6DQogIGh0bWxfbm90ZWJvb2s6DQogICAgdGhlbWU6IHVuaXRlZA0KICAgIGhpZ2hsaWdodDogdGFuZ28NCi0tLQ0KDQpgYGB7ciBzZXR1cH0NCg0Ka25pdHI6Om9wdHNfa25pdCRzZXQocm9vdC5kaXIgPSAiQzovVXNlcnMvZGdhbGxlbi9EZXNrdG9wL1Byb2plY3RzL09EIGJhbGFuY2UvT0QiKQ0KZ2V0d2QoKQ0KbGlicmFyeShyZWFkeGwpDQpgYGANCg0KYGBge3IgbG9hZCBkYXRhfQ0KZGlyKCkNCnJlYWRfZXhjZWxfc2hlZXRzIDwtIGZ1bmN0aW9uKGZpbGUpew0KICANCiAgc2hlZXRzIDwtIHJlYWR4bDo6ZXhjZWxfc2hlZXRzKGZpbGUpDQogIHggPC0gbGFwcGx5KHNoZWV0cywgZnVuY3Rpb24oeCkgcmVhZHhsOjpyZWFkX3hsc3goZmlsZSwgc2hlZXQgPSB4LGNvbF9uYW1lcyA9IEZBTFNFKSkNCiAgeCA8LSBsYXBwbHkoeCwgYXMubWF0cml4KQ0KICBuYW1lcyh4KSA8LSBzaGVldHMNCiAgeA0KfQ0KDQpsaXN0IDwtIHJlYWRfZXhjZWxfc2hlZXRzKCJUYWJsZVBlcmNlbnRzX3NwbGl0Lnhsc3giKQ0KDQpJbnB1dFZvbHVtZSA8LSByZWFkLmNzdignSW5wdXRWb2xzLmNzdicpDQoNCklucHV0Vm9sIDwtIGxpc3QoKQ0KDQpmb3IobiBpbiAxOmxlbmd0aChsZXZlbHMoYXMuZmFjdG9yKElucHV0Vm9sdW1lJFRhYmxlKSkpKSB7DQoNCiAgZyA8LSBJbnB1dFZvbHVtZVtJbnB1dFZvbHVtZSRUYWJsZT09bixdDQoNCiAgdGFiIDwtIHNwbGl0KGcscGFzdGUoIlRQIixnJFRpbWVQZXJpb2Qsc2VwPScnKSkNCg0KICBJbnB1dFZvbFtbbl1dIDwtIHRhYg0KfQ0KDQoNClRhcmdldCA8LSByZWFkLmNzdignVGFyZ2V0Vm9scy5jc3YnKQ0KDQpUYXJnZXRzIDwtIGxpc3QoKQ0KDQpmb3IobiBpbiAxOmxlbmd0aChsZXZlbHMoYXMuZmFjdG9yKFRhcmdldCRUYWJsZSkpKSkgew0KDQogIGcgPC0gVGFyZ2V0W1RhcmdldCRUYWJsZT09bixdDQoNCiAgdGFiIDwtIHNwbGl0KGcscGFzdGUoIlRQIixnJFRpbWVQZXJpb2Qsc2VwPScnKSkNCg0KICBUYXJnZXRzW1tuXV0gPC0gdGFiDQp9DQpgYGANCg0KYGBge3J9DQoNCnN1bSh0YXJnZXQpID09IHN1bSh2b2x1bWUpDQoNCk9EX0JhbCA8LSBmdW5jdGlvbih2b2x1bWUscGVyY2VudCx0YXJnZXQpew0KDQpjb2xfZml4IDwtIGZ1bmN0aW9uKHZvbHVtZSxwZXJjZW50LHRhcmdldCkgew0KICANCiAgY29sX25vIDwtIG5jb2wocGVyY2VudCkNCiAgcm93X25vIDwtIG5yb3cocGVyY2VudCkNCiAgDQogICMjIHNldHVwIGEgbWF0cml4IHRvIGhvbGQgdGhlIHJlc3VsdHMNCiAgaiA8LSBtYXRyaXgobnJvdyA9IHJvd19ubywgbmNvbCA9IGNvbF9ubykNCiAgDQogIA0KICBmb3IobiBpbiBjKDE6Y29sX25vKSkgew0KICAgIA0KICAgIHggPC0gcGVyY2VudFssbl0NCiAgICANCiAgICBjbnQgPC0gMQ0KICAgICMgaXRyIDwtIDENCiAgICANCiAgICAjI3JlcGVhdCBsb29wIHdpbGwgc3RvcCBvbiBnaXZlbiBpZiBjb21tYW5kIC0gc2VlIGJlbG93DQogICAgcmVwZWF0IHsNCiAgICAgIHhbY250XSA8LSBpZmVsc2UoeFtjbnRdIDw9IC4wMSwNCiAgICAgICAgICAgICAgICAgICAgICAgeFtjbnRdLA0KICAgICAgICAgICAgICAgICAgICAgICBpZmVsc2UoeFtjbnRdID49IC45OSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHhbY250XSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGlmZWxzZShzdW0oeCp2b2x1bWUsIG5hLnJtID0gVCktdGFyZ2V0W25dIDwgMCwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB4W2NudF0gKyAuMDEsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgeFtjbnRdIC0gLjAxKSkpDQogICAgICANCiAgICAgIGNudCA8LSBpZmVsc2UoY250ID09IHJvd19ubywgMSwgY250ICsgMSkNCiAgICAgICMgaXRyIDwtIGl0ciArIDENCiAgICAgIA0KICAgICAgIyNpZiB0b3RhbCBjYXJzIGFyZSBsZXNzIHRoYW4gNSAiYnJlYWsiIHRoZSBsb29wDQogICAgICBpZihhYnMoc3VtKHggKiB2b2x1bWUsIG5hLnJtID0gVCkgLSB0YXJnZXRbbl0pIDwgNSkgew0KICAgICAgICBicmVhaw0KICAgICAgfQ0KICAgIH0NCiAgICBqWyxuXSA8LSB4DQogIH0NCiAgcmV0dXJuKGopDQp9DQoNCnNjIDwtIHNjcmFtYmxlKHZvbHVtZSA9IHZvbHVtZSwgcGVyY2VudCA9IHBlcmNlbnQsIHRhcmdldCA9IHRhcmdldCkNCg0KcGVyY2VudF9maXggPC0gZnVuY3Rpb24oZGF0LHRhcmdldCx2b2x1bWUpew0KICANCiAgY29sX25vIDwtIG5jb2woZGF0KQ0KICByb3dfbm8gPC0gbnJvdyhkYXQpDQogIGogPC0gbWF0cml4KG5yb3cgPSByb3dfbm8sIG5jb2wgPSBjb2xfbm8pDQogIA0KICBmb3IobiBpbiBjKDE6cm93X25vKSl7DQogICAgDQogICAgeSA8LSBkYXRbbixdDQoNCiAgICByZXBlYXQgew0KICAgICAgDQogICAgICBjb2xfZGlmZiA8LSBjb2xTdW1zKGFwcGx5KGRhdCwyLGZ1bmN0aW9uKHgpIHgqdm9sdW1lKSktdGFyZ2V0DQogICAgICByb3dfc3VtIDwtIHN1bSh5KQ0KICAgICAgDQogICAgICBpbmRleDEgPC0gMQ0KICAgICAgDQogICAgICByZXBlYXQgew0KICAgICAgICANCiAgICAgICAgbWluX2NvbCA8LSBtYXRjaChzb3J0KGNvbF9kaWZmKVtpbmRleDFdLGNvbF9kaWZmKQ0KICAgICAgICBpbmRleDEgPC0gaW5kZXgxICsgMQ0KICAgICAgICANCiAgICAgICAgaWYoeVttaW5fY29sXSA+PSAwLjAxICYgeVttaW5fY29sXSA8PSAwLjk5IHwgYW55KHkgPT0gMSkpew0KICAgICAgICAgIGJyZWFrDQogICAgICAgIH0NCiAgICAgIH0NCg0KICAgICAgaW5kZXgyIDwtIDENCiAgICAgIHJlcGVhdCB7DQogICAgICAgIA0KICAgICAgICBtYXhfY29sIDwtIG1hdGNoKHNvcnQoY29sX2RpZmYsZGVjcmVhc2luZyA9IFRSVUUpW2luZGV4Ml0sY29sX2RpZmYpDQogICAgICAgIGluZGV4MiA8LSBpbmRleDIgKyAxDQogICAgICAgIA0KICAgICAgICBpZih5W21heF9jb2xdID49IDAuMDEgJiB5W21heF9jb2xdIDw9IDAuOTkgfCBhbnkoeSA9PSAxKSl7DQogICAgICAgICAgYnJlYWsNCiAgICAgICAgfQ0KICAgICAgfQ0KICAgICAgDQogICAgICBtaW5fY29sX2luZGV4IDwtIG1pbl9jb2wNCiAgICAgIG1heF9jb2xfaW5kZXggPC0gbWF4X2NvbA0KICAgICAgeCA8LSBpZmVsc2Uocm93X3N1bSA8IDEsIA0KICAgICAgICAgICAgICAgICAgbWluX2NvbF9pbmRleCwgDQogICAgICAgICAgICAgICAgICBtYXhfY29sX2luZGV4KQ0KICAgICAgDQogICAgICB5W3hdIDwtIGlmZWxzZShhbnkoeSA9PSAxKSx5W3hdLA0KICAgICAgICAgICAgICAgICAgICAgaWZlbHNlKHN1bSh5KSA8IDEsIHlbeF0gKyAuMDEsIHlbeF0gLSAuMDEpKQ0KICAgICAgDQogICAgICBkYXRbbixdIDwtIHkNCiAgICAgIA0KICAgICAgaWYoc3VtKHkpID49IDAuOTkgJiBzdW0oeSkgPD0gMS4wMSkgew0KICAgICAgICBicmVhaw0KICAgICAgfQ0KICAgIH0NCiAgfQ0KcmV0dXJuKGRhdCkNCn0NCg0Kcm93X2ZpeCA8LSBwZXJjZW50X2ZpeChjb2xfZml4ID0gY29sX2ZpeCwgdGFyZ2V0ID0gdGFyZ2V0LHZvbHVtZSA9IHZvbHVtZSkNCg0KcG9ycG9ydGlvbiA8LSBmdW5jdGlvbihwZXJjZW50LHZvbHVtZSkgew0KICANCiAgZGF0X25ldyA8LSBhcHBseShwZXJjZW50LDIsZnVuY3Rpb24oeCkgeCAqIHZvbHVtZSkNCiAgDQogICMgcm91bmQoYXBwbHkoZGF0LDIsZnVuY3Rpb24oeCkgeCAqIHZvbHVtZSksMCkNCiAgDQogIA0KICBzdW1fY29sIDwtIGNvbFN1bXMoZGF0X25ldykNCiAgDQogIHBvcnBvcnRpb24gPC0gbWFwcGx5KGZ1bmN0aW9uKHgpIHtkYXRfbmV3Wyx4XS9zdW1fY29sW3hdfSwNCiAgICAgICAgICAgICAgICAgICAgICAgeCA9IGMoMTpuY29sKGRhdF9uZXcpKSkNCiAgDQogIGNvbF9kaWZmIDwtIHN1bV9jb2wtdGFyZ2V0DQogIA0KICBwcm9wX2RpZmYgPC0gbWFwcGx5KGZ1bmN0aW9uKHgpIHtwb3Jwb3J0aW9uWyx4XSpjb2xfZGlmZlt4XX0sDQogICAgICAgICAgICAgICAgICAgICAgeCA9IGMoMTpuY29sKHBvcnBvcnRpb24pKSkNCiAgDQogIGRpZmYgPC0gbWFwcGx5KGZ1bmN0aW9uKHgpIHtpZmVsc2UoaXMubmEocHJvcF9kaWZmWyx4XS92b2x1bWUpLHByb3BfZGlmZlsseF0scHJvcF9kaWZmWyx4XS92b2x1bWUpfSwNCiAgICAgICAgICAgICAgICAgeCA9IGMoMTpuY29sKHByb3BfZGlmZikpKQ0KICANCiAgayA8LSBwZXJjZW50IC0gZGlmZg0KICANCiAgZGF0X2ZpbmFsIDwtIGsNCiAgZGF0X2ZpbmFsWyxuY29sKGRhdF9maW5hbCldIDwtIGtbLG5jb2woayldIC0gKHJvd1N1bXMoayktMSkNCiAgDQogIHJldHVybihkYXRfZmluYWwpDQp9DQoNCmZpbmFsX2RhdGEgPC0gcG9ycG9ydGlvbihwZXJjZW50ID0gcm93X2ZpeCwgdm9sdW1lID0gdm9sdW1lKQ0KDQoNCg0KfQ0KYGBgDQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2siDQpvdXRwdXQ6DQogIGh0bWxfbm90ZWJvb2s6DQogICAgdGhlbWU6IHVuaXRlZA0KICAgIGhpZ2hsaWdodDogdGFuZ28NCi0tLQ0KDQpgYGB7ciBzZXR1cH0NCg0Ka25pdHI6Om9wdHNfa25pdCRzZXQocm9vdC5kaXIgPSAiQzovVXNlcnMvZGdhbGxlbi9EZXNrdG9wL1Byb2plY3RzL09EIGJhbGFuY2UvT0QiKQ0KZ2V0d2QoKQ0KbGlicmFyeShyZWFkeGwpDQpgYGANCg0KYGBge3IgbG9hZCBkYXRhfQ0Kcm0obGlzdCA9IGxzKCkpDQoNCnJlYWRfZXhjZWxfc2hlZXRzIDwtIGZ1bmN0aW9uKGZpbGUpew0KICANCiAgc2hlZXRzIDwtIHJlYWR4bDo6ZXhjZWxfc2hlZXRzKCJUYWJsZVBlcmNlbnRzX3NwbGl0Lnhsc3giKQ0KICB4IDwtIGxhcHBseShzaGVldHMsIGZ1bmN0aW9uKHgpIHJlYWR4bDo6cmVhZF94bHN4KCJUYWJsZVBlcmNlbnRzX3NwbGl0Lnhsc3giLCBzaGVldCA9IHgsY29sX25hbWVzID0gRkFMU0UsIG5hID0gJ05BJykpDQogIHggPC0gbGFwcGx5KHgsIGFzLm1hdHJpeCkNCiAgbmFtZXMoeCkgPC0gc2hlZXRzDQogIHgNCn0NCg0KcGVyY2VudF9saXN0IDwtIHJlYWRfZXhjZWxfc2hlZXRzKCJUYWJsZVBlcmNlbnRzX3NwbGl0Lnhsc3giKQ0KDQpJbnB1dFZvbHVtZSA8LSByZWFkLmNzdignSW5wdXRWb2xzLmNzdicpDQoNCklucHV0Vm9sIDwtIGxpc3QoKQ0KDQpmb3IobiBpbiAxOmxlbmd0aChsZXZlbHMoYXMuZmFjdG9yKElucHV0Vm9sdW1lJFRhYmxlKSkpKSB7DQoNCiAgZyA8LSBJbnB1dFZvbHVtZVtJbnB1dFZvbHVtZSRUYWJsZT09bixdDQoNCiAgdGFiIDwtIHNwbGl0KGcscGFzdGUoIlRQIixnJFRpbWVQZXJpb2Qsc2VwPScnKSkNCg0KICBJbnB1dFZvbFtbbl1dIDwtIHRhYg0KfQ0KDQoNClRhcmdldCA8LSByZWFkLmNzdignVGFyZ2V0Vm9scy5jc3YnKQ0KDQpUYXJnZXRzIDwtIGxpc3QoKQ0KDQpmb3IobiBpbiAxOmxlbmd0aChsZXZlbHMoYXMuZmFjdG9yKFRhcmdldCRUYWJsZSkpKSkgew0KDQogIGcgPC0gVGFyZ2V0W1RhcmdldCRUYWJsZT09bixdDQoNCiAgdGFiIDwtIHNwbGl0KGcscGFzdGUoIlRQIixnJFRpbWVQZXJpb2Qsc2VwPScnKSkNCg0KICBUYXJnZXRzW1tuXV0gPC0gdGFiDQp9DQpgYGANCg0KYGBge3J9DQoNCnZvbF8zIDwtIElucHV0Vm9sW1szXV0NCnRhcl8zIDwtIFRhcmdldHNbWzNdXQ0KcGVyY2VudF8zIDwtIHBlcmNlbnRfbGlzdFtbM11dDQoNCk9EX0JhbCA8LSBmdW5jdGlvbih2b2x1bWVfbGlzdCxwZXJjZW50LHRhcmdldF9saXN0KXsNCiAgDQogIHRhYmxlX2xpc3QgPC0gbGlzdCgpDQogIA0KICBmb3IoaSBpbiBjKDE6bGVuZ3RoKHZvbHVtZV9saXN0KSkpew0KICAgIA0KICAgIHZvbHVtZSA8LSB2b2xfM1tbaV1dJElucHV0Vm9sDQogICAgdGFyZ2V0IDwtIHRhcl8zW1tpXV0kVmFsdWUNCiAgICANCiAgICAjIGNvbF9maXggPC0gZnVuY3Rpb24odm9sdW1lLHBlcmNlbnQsdGFyZ2V0KSB7DQogICAgDQogICAgY29sX25vIDwtIG5jb2wocGVyY2VudCkNCiAgICByb3dfbm8gPC0gbnJvdyhwZXJjZW50KQ0KICAgIA0KICAgICMjIHNldHVwIGEgbWF0cml4IHRvIGhvbGQgdGhlIHJlc3VsdHMNCiAgICBkYXQgPC0gbWF0cml4KG5yb3cgPSByb3dfbm8sIG5jb2wgPSBjb2xfbm8pDQogICAgDQogICAgDQogICAgZm9yKG4gaW4gYygxOmNvbF9ubykpIHsNCiAgICAgIA0KICAgICAgeCA8LSBwZXJjZW50WyxuXQ0KICAgICAgDQogICAgICBjbnQgPC0gMQ0KICAgICAgIyBpdHIgPC0gMQ0KICAgICAgDQogICAgICAjI3JlcGVhdCBsb29wIHdpbGwgc3RvcCBvbiBnaXZlbiBpZiBjb21tYW5kIC0gc2VlIGJlbG93DQogICAgICByZXBlYXQgew0KICAgICAgICB4W2NudF0gPC0gaWZlbHNlKHN1bSh4KnZvbHVtZSwgbmEucm0gPSBUKS10YXJnZXRbbl0gPCAwLA0KICAgICAgICAgICAgICAgICAgICAgICAgIChpZmVsc2UoeFtjbnRdID49IC45OSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHhbY250XSx4W2NudF0gKyAuMDEpKSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAoaWZlbHNlKHhbY250XSA8PSAuMDEsDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB4W2NudF0seFtjbnRdIC0gLjAxKSkpDQogICAgICAgIA0KICAgICAgICBjbnQgPC0gaWZlbHNlKGNudCA9PSByb3dfbm8sIDEsIGNudCArIDEpDQogICAgICAgICMgaXRyIDwtIGl0ciArIDENCiAgICAgICAgDQogICAgICAgICMjaWYgdG90YWwgY2FycyBhcmUgbGVzcyB0aGFuIDUgImJyZWFrIiB0aGUgbG9vcA0KICAgICAgICBpZihhYnMoc3VtKHggKiB2b2x1bWUsIG5hLnJtID0gVCkgLSB0YXJnZXRbbl0pIDwgNSkgew0KICAgICAgICAgIGJyZWFrDQogICAgICAgIH0NCiAgICAgIH0NCiAgICAgIGRhdFssbl0gPC0geA0KICAgIH0NCiAgICANCiAgICBkYXRfMiA8LSBkYXQNCiAgICANCiAgICBmb3IobiBpbiBjKDE6cm93X25vKSl7DQogICAgDQogICAgeSA8LSBkYXRfMltuLF0NCg0KICAgIHJlcGVhdCB7DQogICAgICANCiAgICAgIGNvbF9kaWZmIDwtIGNvbFN1bXMoYXBwbHkoZGF0XzIsMixmdW5jdGlvbih4KSB4KnZvbHVtZSksIG5hLnJtID0gVFJVRSktdGFyZ2V0DQogICAgICByb3dfc3VtIDwtIHN1bSh5LCBuYS5ybSA9IFRSVUUpDQogICAgICANCiAgICAgIGluZGV4MSA8LSAxDQogICAgICANCiAgICAgIHJlcGVhdCB7DQogICAgICAgIA0KICAgICAgICBtaW5fY29sIDwtIG1hdGNoKHNvcnQoY29sX2RpZmYpW2luZGV4MV0sY29sX2RpZmYpDQogICAgICAgIGluZGV4MSA8LSBpbmRleDEgKyAxDQogICAgICAgIA0KICAgICAgbG9nMSA8LSAhaXMubmEoeVttaW5fY29sXSkgJiB5W21pbl9jb2xdID49IDAuMDEgJiB5W21pbl9jb2xdIDw9IDAuOTkNCiAgICAgIGxvZzIgPC0gIWlzLm5hKHlbbWluX2NvbF0pICYgeVttaW5fY29sXSA9PSAxDQogICAgICANCiAgICAgIGlmKGxvZzEgfCBsb2cyICl7DQogICAgICAgICAgYnJlYWsNCiAgICAgICAgfQ0KICAgICAgfQ0KICAgICAgDQogICAgICBpbmRleDIgPC0gMQ0KICAgICAgDQogICAgICByZXBlYXQgew0KICAgICAgICANCiAgICAgICAgbWF4X2NvbCA8LSBtYXRjaChzb3J0KGNvbF9kaWZmLGRlY3JlYXNpbmcgPSBUUlVFKVtpbmRleDJdLGNvbF9kaWZmKQ0KICAgICAgICBpbmRleDIgPC0gaW5kZXgyICsgMQ0KICAgICAgICANCiAgICAgICAgbG9nMSA8LSAhaXMubmEoeVttYXhfY29sXSkgJiB5W21heF9jb2xdID49IDAuMDEgJiB5W21heF9jb2xdIDw9IDAuOTkNCiAgICAgICAgbG9nMiA8LSAhaXMubmEoeVttYXhfY29sXSkgJiB5W21heF9jb2xdID09IDENCiAgICAgICAgDQogICAgICAgIGlmKGxvZzEgfCBsb2cyICl7DQogICAgICAgICAgYnJlYWsNCiAgICAgICAgfQ0KICAgICAgfQ0KICAgICAgDQogICAgICB4IDwtIGlmZWxzZShyb3dfc3VtIDwgMSwgDQogICAgICAgICAgICAgICAgICBtaW5fY29sLCANCiAgICAgICAgICAgICAgICAgIG1heF9jb2wpDQogICAgICANCiAgICAgIHlbeF0gPC0gaWZlbHNlKHN1bSh5LCBuYS5ybSA9IFRSVUUpID49IDAuOTkgJiBzdW0oeSwgbmEucm0gPSBUUlVFKSA8PSAxLjAxLA0KICAgICAgICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgICAgICAgICB5W3hdLA0KICAgICAgICAgICAgICAgICAgICAgDQogICAgICAgICAgICAgICAgICAgICBpZmVsc2Uoc3VtKHksIG5hLnJtID0gVFJVRSkgPCAxLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgICB5W3hdICsgLjAwMSwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICB5W3hdIC0gLjAwMSkpDQogICAgICANCiAgICAgIGRhdF8yW24sXSA8LSB5DQogICAgICANCiAgICAgIGlmKHN1bSh5LG5hLnJtID0gVFJVRSkgPj0gMC45OSAmIHN1bSh5LG5hLnJtID0gVFJVRSkgPD0gMS4wMSkgew0KICAgICAgICBicmVhaw0KICAgICAgICB9DQogICAgICB9DQogICAgfQ0KICAgIA0KICAgICMgcm93X2ZpeCA8LSBwZXJjZW50X2ZpeChjb2xfZml4ID0gY29sX2ZpeCwgdGFyZ2V0ID0gdGFyZ2V0LHZvbHVtZSA9IHZvbHVtZSkNCiAgICAjIA0KICAgICMgcG9ycG9ydGlvbiA8LSBmdW5jdGlvbihwZXJjZW50LHZvbHVtZSkgew0KICAgIA0KICAgIHZvbF9uZXcgPC0gYXBwbHkoZGF0XzIsMixmdW5jdGlvbih4KSB4ICogdm9sdW1lKQ0KICAgIA0KICAgICMgcm91bmQoYXBwbHkoZGF0LDIsZnVuY3Rpb24oeCkgeCAqIHZvbHVtZSksMCkNCiAgICANCiAgICBzdW1fY29sIDwtIGNvbFN1bXModm9sX25ldywgbmEucm0gPSBUUlVFKQ0KICAgIA0KICAgIHBvcnBvcnRpb24gPC0gbWFwcGx5KGZ1bmN0aW9uKHgpIHt2b2xfbmV3Wyx4XS9zdW1fY29sW3hdfSwNCiAgICAgICAgICAgICAgICAgICAgICAgICB4ID0gYygxOm5jb2wodm9sX25ldykpKQ0KICAgIA0KICAgIGNvbF9kaWZmIDwtIHN1bV9jb2wtdGFyZ2V0DQogICAgDQogICAgcHJvcF9kaWZmIDwtIG1hcHBseShmdW5jdGlvbih4KSB7cG9ycG9ydGlvblsseF0qY29sX2RpZmZbeF19LA0KICAgICAgICAgICAgICAgICAgICAgICAgeCA9IGMoMTpuY29sKHBvcnBvcnRpb24pKSkNCiAgICANCiAgICBkaWZmIDwtIG1hcHBseShmdW5jdGlvbih4KSB7aWZlbHNlKGlzLm5hKHByb3BfZGlmZlsseF0vdm9sdW1lKSxwcm9wX2RpZmZbLHhdLHByb3BfZGlmZlsseF0vdm9sdW1lKX0sDQogICAgICAgICAgICAgICAgICAgeCA9IGMoMTpuY29sKHByb3BfZGlmZikpKQ0KICAgIA0KICAgIGsgPC0gZGF0XzIgLSBkaWZmDQogICAgDQogICAgZGF0X2ZpbmFsIDwtIGsNCiAgZGF0X2ZpbmFsWyxuY29sKGRhdF9maW5hbCldIDwtIGtbLG5jb2woayldIC0gKHJvd1N1bXMoaywgbmEucm0gPSBUUlVFKS0xKQ0KICANCiAgdGFibGVfbGlzdFtbaV1dIDwtIGRhdF9maW5hbCANCiAgDQogIH0NCiAgcmV0dXJuKHRhYmxlX2xpc3QpDQp9DQoNCmBgYA0KDQpgYGB7cn0NCmZpbmFsX2RhdGEgPC0gZGF0X2ZpbmFsDQpmaW5hbF9kYXRhDQpyb3dTdW1zKGZpbmFsX2RhdGEsIG5hLnJtID0gVFJVRSkNCmNvbFN1bXMoYXBwbHkoZmluYWxfZGF0YSwyLGZ1bmN0aW9uKHgpIHgqdm9sdW1lKSxuYS5ybSA9IFRSVUUpLXRhcmdldA0Kcm91bmQoZGF0X2ZpbmFsLXBlcmNlbnQsMykNCmBgYA0KDQo=</div>
 
 
 

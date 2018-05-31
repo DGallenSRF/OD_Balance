@@ -13,19 +13,9 @@ getwd()
 library(readxl)
 ```
 
-```{r load data}
-dir()
-read_excel_sheets <- function(file){
-  
-  sheets <- readxl::excel_sheets(file)
-  x <- lapply(sheets, function(x) readxl::read_xlsx(file, sheet = x,col_names = FALSE))
-  x <- lapply(x, as.matrix)
-  names(x) <- sheets
-  x
-}
 
-list <- read_excel_sheets("TablePercents_split.xlsx")
-
+```{r sample data}
+rm(list = ls())
 # percent <- matrix(c(.058996,0,0,0,0,0,0,0,0,0,0,
 #                     .015345,0,.021764,0,0,0,0,0,0,0,0,
 #                     .023861,0,.0454,.205,0,0,0,0,0,0,0,
@@ -64,9 +54,9 @@ list <- read_excel_sheets("TablePercents_split.xlsx")
 # volume <- matrix(c(662,196,245,62,164,95,190,38,159,27,84,44,499,103,56,144), nrow = 16)
 
 
-# percent <- matrix(c(.2689,0,0,0,0,
-#               .0936,.07516,0,0,0,
-#               .3237,.4681,.49745,.54248,0,
+# percent <- matrix(c(.2689,NA,NA,NA,NA,
+#               .0936,.07516,NA,NA,NA,
+#               .3237,.4681,.49745,.54248,NA,
 #               .14873,.2851,.34164,.32259,.75610,
 #               .16496,.1716,.1609,.13493,.2439), nrow = 5, ncol = 5)
 # volume <- matrix(c(322,79,40,48,37),  nrow = 5)
@@ -81,16 +71,17 @@ list <- read_excel_sheets("TablePercents_split.xlsx")
 # volume <- matrix(c(940,203,1,43,231,78,50,42,63,65,37,71,33,294,24), nrow = 15)
 ```
 
-```{r}
 
-percent <- 
-
-```
 
 
 Check to ensure that the target and volume sets sum to the same value.
 
 ```{r Check datasets}
+
+    volume <- vol_3[[1]]$InputVol
+    target <- tar_3[[1]]$Value
+    percent  <- percent_3
+    
 sum(target) == sum(volume)
 
 print(sum(target))
@@ -105,7 +96,7 @@ Also make sure that the rows of the percent matrix sum to 100 (as they should wh
 
 ```{r percent check}
 
-rowSums(percent) 
+rowSums(percent,na.rm = TRUE) 
 
 ```
 
@@ -135,13 +126,11 @@ scramble <- function(volume,percent,target) {
     
     ##repeat loop will stop on given if command - see below
     repeat {
-      x[cnt] <- ifelse(x[cnt] <= .01,
-                       x[cnt],
-                       ifelse(x[cnt] >= .99,
-                              x[cnt],
-                              ifelse(sum(x*volume, na.rm = T)-target[n] < 0,
-                                     x[cnt] + .01,
-                                     x[cnt] - .01)))
+      x[cnt] <- ifelse(sum(x*volume, na.rm = T)-target[n] < 0,
+                       (ifelse(x[cnt] >= .99,
+                               x[cnt],x[cnt] + .01)),
+                        (ifelse(x[cnt] <= .01,
+                               x[cnt],x[cnt] - .01)))
       
       cnt <- ifelse(cnt == row_no, 1, cnt + 1)
       # itr <- itr + 1
@@ -159,11 +148,11 @@ scramble <- function(volume,percent,target) {
 
 Check results:
 
-```{r}
+```{r scramble data}
 
 sc <- scramble(volume = volume, percent = percent, target = target)
 sc
-colSums(apply(sc, 2, function(x) x * volume))-target
+colSums(apply(sc, 2, function(x) x * volume),na.rm = TRUE)-target
 ```
 
 #### Fix percentage column
@@ -184,8 +173,8 @@ percent_fix <- function(dat,target,volume){
 
     repeat {
       
-      col_diff <- colSums(apply(dat,2,function(x) x*volume))-target
-      row_sum <- sum(y)
+      col_diff <- colSums(apply(dat,2,function(x) x*volume), na.rm = TRUE)-target
+      row_sum <- sum(y, na.rm = TRUE)
       
       index1 <- 1
       
@@ -194,34 +183,36 @@ percent_fix <- function(dat,target,volume){
         min_col <- match(sort(col_diff)[index1],col_diff)
         index1 <- index1 + 1
         
-        if(y[min_col] >= 0.01 & y[min_col] <= 0.99 | any(y == 1)){
+        if(!is.na(y[min_col]) & y[min_col] >= 0.01 & y[min_col] <= 0.99 | y[min_col] ==1){
           break
         }
       }
-
+      
       index2 <- 1
       repeat {
         
         max_col <- match(sort(col_diff,decreasing = TRUE)[index2],col_diff)
         index2 <- index2 + 1
         
-        if(y[max_col] >= 0.01 & y[max_col] <= 0.99 | any(y == 1)){
+        if(!is.na(y[max_col]) & y[max_col] >= 0.01 & y[max_col] <= 0.99 | y[max_col] ==1){
           break
         }
       }
       
-      min_col_index <- min_col
-      max_col_index <- max_col
       x <- ifelse(row_sum < 1, 
-                  min_col_index, 
-                  max_col_index)
+                  min_col, 
+                  max_col)
       
-      y[x] <- ifelse(any(y == 1),y[x],
-                     ifelse(sum(y) < 1, y[x] + .01, y[x] - .01))
-      
+      y[x] <- ifelse(sum(y, na.rm = TRUE) >= 0.99 & sum(y, na.rm = TRUE) <= 1.01,
+                     
+                     y[x],
+                     
+                     ifelse(sum(y, na.rm = TRUE) < 1, 
+                            y[x] + .001,
+                            y[x] - .001))
       dat[n,] <- y
       
-      if(sum(y) >= 0.99 & sum(y) <= 1.01) {
+      if(sum(y,na.rm = TRUE) >= 0.99 & sum(y,na.rm = TRUE) <= 1.01) {
         break
       }
     }
@@ -234,13 +225,13 @@ return(dat)
 ```{r run percent fix}
 perc <- percent_fix(dat = sc, target = target,volume = volume)
 perc
-rowSums(perc)
+rowSums(perc, na.rm = TRUE)
 ```
 
 This will have thrown off our column sums which no longer will be with 5 cars of the target.
 
 ```{r column sum checks}
-colSums(apply(perc, 2, function(x) x * volume))-target
+colSums(apply(perc, 2, function(x) x * volume), na.rm = TRUE)-target
 ```
 
 
@@ -258,7 +249,7 @@ porportion <- function(percent,volume) {
   # round(apply(dat,2,function(x) x * volume),0)
   
   
-  sum_col <- colSums(dat_new)
+  sum_col <- colSums(dat_new, na.rm = TRUE)
   
   porportion <- mapply(function(x) {dat_new[,x]/sum_col[x]},
                        x = c(1:ncol(dat_new)))
@@ -274,7 +265,7 @@ porportion <- function(percent,volume) {
   k <- percent - diff
   
   dat_final <- k
-  dat_final[,ncol(dat_final)] <- k[,ncol(k)] - (rowSums(k)-1)
+  dat_final[,ncol(dat_final)] <- k[,ncol(k)] - (rowSums(k, na.rm = TRUE)-1)
   
   return(dat_final)
 }
@@ -286,8 +277,8 @@ Check the final data set.
 final_data <- porportion(percent = perc, volume = volume)
 
 final_data
-rowSums(final_data)
-colSums(apply(final_data,2,function(x) x*volume))-target
+rowSums(final_data, na.rm = TRUE)
+colSums(apply(final_data,2,function(x) x*volume),na.rm = TRUE)-target
 ```
 
 Show the difference from the original.

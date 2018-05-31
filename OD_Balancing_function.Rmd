@@ -14,17 +14,18 @@ library(readxl)
 ```
 
 ```{r load data}
-dir()
+rm(list = ls())
+
 read_excel_sheets <- function(file){
   
-  sheets <- readxl::excel_sheets(file)
-  x <- lapply(sheets, function(x) readxl::read_xlsx(file, sheet = x,col_names = FALSE))
+  sheets <- readxl::excel_sheets("TablePercents_split.xlsx")
+  x <- lapply(sheets, function(x) readxl::read_xlsx("TablePercents_split.xlsx", sheet = x,col_names = FALSE, na = 'NA'))
   x <- lapply(x, as.matrix)
   names(x) <- sheets
   x
 }
 
-list <- read_excel_sheets("TablePercents_split.xlsx")
+percent_list <- read_excel_sheets("TablePercents_split.xlsx")
 
 InputVolume <- read.csv('InputVols.csv')
 
@@ -56,65 +57,64 @@ for(n in 1:length(levels(as.factor(Target$Table)))) {
 
 ```{r}
 
-sum(target) == sum(volume)
+vol_3 <- InputVol[[3]]
+tar_3 <- Targets[[3]]
+percent_3 <- percent_list[[3]]
 
-OD_Bal <- function(volume,percent,target){
-
-col_fix <- function(volume,percent,target) {
+OD_Bal <- function(volume_list,percent,target_list){
   
-  col_no <- ncol(percent)
-  row_no <- nrow(percent)
+  table_list <- list()
   
-  ## setup a matrix to hold the results
-  j <- matrix(nrow = row_no, ncol = col_no)
-  
-  
-  for(n in c(1:col_no)) {
+  for(i in c(1:length(volume_list))){
     
-    x <- percent[,n]
+    volume <- vol_3[[i]]$InputVol
+    target <- tar_3[[i]]$Value
     
-    cnt <- 1
-    # itr <- 1
+    # col_fix <- function(volume,percent,target) {
     
-    ##repeat loop will stop on given if command - see below
-    repeat {
-      x[cnt] <- ifelse(x[cnt] <= .01,
-                       x[cnt],
-                       ifelse(x[cnt] >= .99,
-                              x[cnt],
-                              ifelse(sum(x*volume, na.rm = T)-target[n] < 0,
-                                     x[cnt] + .01,
-                                     x[cnt] - .01)))
+    col_no <- ncol(percent)
+    row_no <- nrow(percent)
+    
+    ## setup a matrix to hold the results
+    dat <- matrix(nrow = row_no, ncol = col_no)
+    
+    
+    for(n in c(1:col_no)) {
       
-      cnt <- ifelse(cnt == row_no, 1, cnt + 1)
-      # itr <- itr + 1
+      x <- percent[,n]
       
-      ##if total cars are less than 5 "break" the loop
-      if(abs(sum(x * volume, na.rm = T) - target[n]) < 5) {
-        break
+      cnt <- 1
+      # itr <- 1
+      
+      ##repeat loop will stop on given if command - see below
+      repeat {
+        x[cnt] <- ifelse(sum(x*volume, na.rm = T)-target[n] < 0,
+                         (ifelse(x[cnt] >= .99,
+                                 x[cnt],x[cnt] + .01)),
+                         (ifelse(x[cnt] <= .01,
+                                 x[cnt],x[cnt] - .01)))
+        
+        cnt <- ifelse(cnt == row_no, 1, cnt + 1)
+        # itr <- itr + 1
+        
+        ##if total cars are less than 5 "break" the loop
+        if(abs(sum(x * volume, na.rm = T) - target[n]) < 5) {
+          break
+        }
       }
+      dat[,n] <- x
     }
-    j[,n] <- x
-  }
-  return(j)
-}
-
-sc <- scramble(volume = volume, percent = percent, target = target)
-
-percent_fix <- function(dat,target,volume){
-  
-  col_no <- ncol(dat)
-  row_no <- nrow(dat)
-  j <- matrix(nrow = row_no, ncol = col_no)
-  
-  for(n in c(1:row_no)){
     
-    y <- dat[n,]
+    dat_2 <- dat
+    
+    for(n in c(1:row_no)){
+    
+    y <- dat_2[n,]
 
     repeat {
       
-      col_diff <- colSums(apply(dat,2,function(x) x*volume))-target
-      row_sum <- sum(y)
+      col_diff <- colSums(apply(dat_2,2,function(x) x*volume), na.rm = TRUE)-target
+      row_sum <- sum(y, na.rm = TRUE)
       
       index1 <- 1
       
@@ -123,74 +123,88 @@ percent_fix <- function(dat,target,volume){
         min_col <- match(sort(col_diff)[index1],col_diff)
         index1 <- index1 + 1
         
-        if(y[min_col] >= 0.01 & y[min_col] <= 0.99 | any(y == 1)){
+      log1 <- !is.na(y[min_col]) & y[min_col] >= 0.01 & y[min_col] <= 0.99
+      log2 <- !is.na(y[min_col]) & y[min_col] == 1
+      
+      if(log1 | log2 ){
           break
         }
       }
-
+      
       index2 <- 1
+      
       repeat {
         
         max_col <- match(sort(col_diff,decreasing = TRUE)[index2],col_diff)
         index2 <- index2 + 1
         
-        if(y[max_col] >= 0.01 & y[max_col] <= 0.99 | any(y == 1)){
+        log1 <- !is.na(y[max_col]) & y[max_col] >= 0.01 & y[max_col] <= 0.99
+        log2 <- !is.na(y[max_col]) & y[max_col] == 1
+        
+        if(log1 | log2 ){
           break
         }
       }
       
-      min_col_index <- min_col
-      max_col_index <- max_col
       x <- ifelse(row_sum < 1, 
-                  min_col_index, 
-                  max_col_index)
+                  min_col, 
+                  max_col)
       
-      y[x] <- ifelse(any(y == 1),y[x],
-                     ifelse(sum(y) < 1, y[x] + .01, y[x] - .01))
+      y[x] <- ifelse(sum(y, na.rm = TRUE) >= 0.99 & sum(y, na.rm = TRUE) <= 1.01,
+                     
+                     y[x],
+                     
+                     ifelse(sum(y, na.rm = TRUE) < 1, 
+                            y[x] + .001,
+                            y[x] - .001))
       
-      dat[n,] <- y
+      dat_2[n,] <- y
       
-      if(sum(y) >= 0.99 & sum(y) <= 1.01) {
+      if(sum(y,na.rm = TRUE) >= 0.99 & sum(y,na.rm = TRUE) <= 1.01) {
         break
+        }
       }
     }
+    
+    # row_fix <- percent_fix(col_fix = col_fix, target = target,volume = volume)
+    # 
+    # porportion <- function(percent,volume) {
+    
+    vol_new <- apply(dat_2,2,function(x) x * volume)
+    
+    # round(apply(dat,2,function(x) x * volume),0)
+    
+    sum_col <- colSums(vol_new, na.rm = TRUE)
+    
+    porportion <- mapply(function(x) {vol_new[,x]/sum_col[x]},
+                         x = c(1:ncol(vol_new)))
+    
+    col_diff <- sum_col-target
+    
+    prop_diff <- mapply(function(x) {porportion[,x]*col_diff[x]},
+                        x = c(1:ncol(porportion)))
+    
+    diff <- mapply(function(x) {ifelse(is.na(prop_diff[,x]/volume),prop_diff[,x],prop_diff[,x]/volume)},
+                   x = c(1:ncol(prop_diff)))
+    
+    k <- dat_2 - diff
+    
+    dat_final <- k
+  dat_final[,ncol(dat_final)] <- k[,ncol(k)] - (rowSums(k, na.rm = TRUE)-1)
+  
+  table_list[[i]] <- dat_final 
+  
   }
-return(dat)
+  return(table_list)
 }
 
-row_fix <- percent_fix(col_fix = col_fix, target = target,volume = volume)
-
-porportion <- function(percent,volume) {
-  
-  dat_new <- apply(percent,2,function(x) x * volume)
-  
-  # round(apply(dat,2,function(x) x * volume),0)
-  
-  
-  sum_col <- colSums(dat_new)
-  
-  porportion <- mapply(function(x) {dat_new[,x]/sum_col[x]},
-                       x = c(1:ncol(dat_new)))
-  
-  col_diff <- sum_col-target
-  
-  prop_diff <- mapply(function(x) {porportion[,x]*col_diff[x]},
-                      x = c(1:ncol(porportion)))
-  
-  diff <- mapply(function(x) {ifelse(is.na(prop_diff[,x]/volume),prop_diff[,x],prop_diff[,x]/volume)},
-                 x = c(1:ncol(prop_diff)))
-  
-  k <- percent - diff
-  
-  dat_final <- k
-  dat_final[,ncol(dat_final)] <- k[,ncol(k)] - (rowSums(k)-1)
-  
-  return(dat_final)
-}
-
-final_data <- porportion(percent = row_fix, volume = volume)
-
-
-
-}
 ```
+
+```{r}
+final_data <- dat_final
+final_data
+rowSums(final_data, na.rm = TRUE)
+colSums(apply(final_data,2,function(x) x*volume),na.rm = TRUE)-target
+round(dat_final-percent,3)
+```
+
