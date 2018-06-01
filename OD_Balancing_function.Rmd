@@ -11,10 +11,11 @@ output:
 knitr::opts_knit$set(root.dir = "C:/Users/dgallen/Desktop/Projects/OD balance/OD")
 getwd()
 library(readxl)
+library(reshape2)
 ```
 
 ```{r load data}
-rm(list = ls())
+# rm(list = ls())
 
 read_excel_sheets <- function(file){
   
@@ -66,7 +67,7 @@ OD_Bal <- function(volume_list,percent,target_list){
   for(i in c(1:length(volume_list))){
     
     volume <- volume_list[[i]]$InputVol
-    target <- target_list[[i]]$Value
+    target <- target_list[[i]]$Target
     
     # col_fix <- function(volume,percent,target) {
     
@@ -121,7 +122,7 @@ OD_Bal <- function(volume_list,percent,target_list){
         min_col <- match(sort(col_diff)[index1],col_diff)
         index1 <- index1 + 1
         
-      log1 <- !is.na(y[min_col]) & y[min_col] >= 0.01 & y[min_col] <= 0.99
+      log1 <- !is.na(y[min_col]) & y[min_col] >= 0 & y[min_col] <= 0.99
       log2 <- !is.na(y[min_col]) & y[min_col] == 1
       
       if(log1 | log2 ){
@@ -136,7 +137,7 @@ OD_Bal <- function(volume_list,percent,target_list){
         max_col <- match(sort(col_diff,decreasing = TRUE)[index2],col_diff)
         index2 <- index2 + 1
         
-        log1 <- !is.na(y[max_col]) & y[max_col] >= 0.01 & y[max_col] <= 0.99
+        log1 <- !is.na(y[max_col]) & y[max_col] >= 0.01 & y[max_col] <= 1
         log2 <- !is.na(y[max_col]) & y[max_col] == 1
         
         if(log1 | log2 ){
@@ -196,18 +197,39 @@ OD_Bal <- function(volume_list,percent,target_list){
   return(table_list)
   }
   print('One row of data - target / volume')
-  return(target/volume)
+  
+  table_list <- list()
+  
+  for(i in c(1:length(volume_list))){
+    
+    volume <- volume_list[[i]]$InputVol
+    target <- target_list[[i]]$Target
+    
+    dat_final <- target / volume
+    
+    table_list[[i]] <- dat_final
+  }
+  return(table_list)
 }
 
 
 ```
 
-```{r table 3}
-vol_3 <- InputVol[[3]]
-tar_3 <- Targets[[3]]
-percent_3 <- percent_list[[3]]
+```{r table 1}
 
-table3 <- OD_Bal(volume_list = vol_3, percent = percent_3, target_list = tar_3)
+vol_1 <- InputVol[[1]]
+tar_1 <- Targets[[1]]
+percent_1 <- percent_list[[1]]
+
+table1 <- OD_Bal(volume_list = vol_1, percent = percent_1, target_list = tar_1)
+
+for(i in c(1:20)){
+print(round(sum(colSums(apply(table1[[i]],2,function(x) x*vol_1[[i]]$InputVol), na.rm = TRUE)-tar_1[[i]]$Value),4))
+
+print(rowSums(table1[[i]],na.rm = TRUE))
+
+}
+
 ```
 
 ```{r table 2}
@@ -224,18 +246,17 @@ print(rowSums(table2[[i]],na.rm = TRUE))
 }
 ```
 
-```{r table 1}
+```{r table 3}
+vol_3 <- InputVol[[3]]
+tar_3 <- Targets[[3]]
+percent_3 <- percent_list[[3]]
 
-vol_1 <- InputVol[[1]]
-tar_1 <- Targets[[1]]
-percent_1 <- percent_list[[1]]
-
-table1 <- OD_Bal(volume_list = vol_1, percent = percent_1, target_list = tar_1)
+table3 <- OD_Bal(volume_list = vol_3, percent = percent_3, target_list = tar_3)
 
 for(i in c(1:20)){
-print(round(sum(colSums(apply(table1[[i]],2,function(x) x*vol_1[[i]]$InputVol), na.rm = TRUE)-tar_1[[i]]$Value),4))
+print(round(sum(colSums(apply(table3[[i]],2,function(x) x*vol_3[[i]]$InputVol), na.rm = TRUE)-tar_3[[i]]$Value),5))
 
-print(rowSums(table1[[i]],na.rm = TRUE))
+print(rowSums(table3[[i]],na.rm = TRUE))
 }
 
 ```
@@ -255,7 +276,6 @@ print(rowSums(table4[[i]],na.rm = TRUE))
 }
 
 ```
-
 
 ```{r table 5}
 
@@ -361,4 +381,5 @@ percent_11 <- percent_list[[11]]
 
 table11 <- OD_Bal(volume_list = vol_11, percent = percent_11, target_list = tar_11)
 
+print(lapply(table11,sum))
 ```
