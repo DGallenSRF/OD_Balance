@@ -229,6 +229,10 @@ vol_1 <- InputVol[[1]]
 tar_1 <- Targets[[1]]
 percent_1 <- percent_list[[1]]
 
+all(lapply(c(1:length(vol_1)), function(x) all(as.numeric(row.names(percent_1)) == vol_1[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_1)), function(x) all(as.numeric(colnames(percent_1)) == tar_1[[x]]$Node)))
+
 table1 <- OD_Bal(volume_list = vol_1, percent = percent_1, target_list = tar_1)
 
 for(i in c(1:20)){
@@ -245,6 +249,11 @@ vol_2 <- InputVol[[2]]
 tar_2 <- Targets[[2]]
 percent_2 <- percent_list[[2]]
 
+all(lapply(c(1:length(vol_2)), function(x) all(as.numeric(row.names(percent_2)) == vol_2[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_2)), function(x) all(as.numeric(colnames(percent_2)) == tar_2[[x]]$Node)))
+
+
 table2 <- OD_Bal(volume_list = vol_2, percent = percent_2, target_list = tar_2)
 
 for(i in c(1:20)){
@@ -258,6 +267,10 @@ print(rowSums(table2[[i]],na.rm = TRUE))
 vol_3 <- InputVol[[3]]
 tar_3 <- Targets[[3]]
 percent_3 <- percent_list[[3]]
+
+all(lapply(c(1:length(vol_3)), function(x) all(as.numeric(row.names(percent_3)) == vol_3[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_3)), function(x) all(as.numeric(colnames(percent_3)) == tar_3[[x]]$Node)))
 
 table3 <- OD_Bal(volume_list = vol_3, percent = percent_3, target_list = tar_3)
 
@@ -275,6 +288,10 @@ vol_4 <- InputVol[[4]]
 tar_4 <- Targets[[4]]
 percent_4 <- percent_list[[4]]
 
+all(lapply(c(1:length(vol_4)), function(x) all(as.numeric(row.names(percent_4)) == vol_4[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_4)), function(x) all(as.numeric(colnames(percent_4)) == tar_4[[x]]$Node)))
+
 table4 <- OD_Bal(volume_list = vol_4, percent = percent_4, target_list = tar_4)
 
 for(i in c(1:20)){
@@ -290,6 +307,10 @@ print(rowSums(table4[[i]],na.rm = TRUE))
 vol_5 <- InputVol[[5]]
 tar_5 <- Targets[[5]]
 percent_5 <- percent_list[[5]]
+
+all(lapply(c(1:length(vol_5)), function(x) all(as.numeric(row.names(percent_5)) == vol_5[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_5)), function(x) all(as.numeric(colnames(percent_5)) == tar_5[[x]]$Node)))
 
 table5 <- OD_Bal(volume_list = vol_5, percent = percent_5, target_list = tar_5)
 
@@ -307,6 +328,10 @@ vol_6 <- InputVol[[6]]
 tar_6 <- Targets[[6]]
 percent_6 <- percent_list[[6]]
 
+all(lapply(c(1:length(vol_6)), function(x) all(as.numeric(row.names(percent_6)) == vol_6[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_6)), function(x) all(as.numeric(colnames(percent_6)) == tar_6[[x]]$Node)))
+
 table6 <- OD_Bal(volume_list = vol_6, percent = percent_6, target_list = tar_6)
 
 for(i in c(1:20)){
@@ -322,6 +347,11 @@ print(rowSums(table6[[i]],na.rm = TRUE))
 vol_7 <- InputVol[[7]]
 tar_7 <- Targets[[7]]
 percent_7 <- percent_list[[7]]
+
+all(lapply(c(1:length(vol_7)), function(x) all(as.numeric(row.names(percent_7)) == vol_7[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_7)), function(x) all(as.numeric(colnames(percent_7)) == tar_7[[x]]$Node)))
+
 
 table7 <- OD_Bal(volume_list = vol_7, percent = percent_7, target_list = tar_7)
 
@@ -339,6 +369,10 @@ vol_8 <- InputVol[[8]]
 tar_8 <- Targets[[8]]
 percent_8 <- percent_list[[8]]
 
+all(lapply(c(1:length(vol_8)), function(x) all(as.numeric(row.names(percent_8)) == vol_8[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_8)), function(x) all(as.numeric(colnames(percent_8)) == tar_8[[x]]$Node)))
+
 table8 <- OD_Bal(volume_list = vol_8, percent = percent_8, target_list = tar_8)
 
 for(i in c(1:20)){
@@ -354,6 +388,10 @@ print(rowSums(table8[[i]],na.rm = TRUE))
 vol_9 <- InputVol[[9]]
 tar_9 <- Targets[[9]]
 percent_9 <- percent_list[[9]]
+
+all(lapply(c(1:length(vol_9)), function(x) all(as.numeric(row.names(percent_9)) == vol_9[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_9)), function(x) all(as.numeric(colnames(percent_9)) == tar_9[[x]]$Node)))
 
 table9 <- OD_Bal(volume_list = vol_9, percent = percent_9, target_list = tar_9)
 
@@ -371,6 +409,11 @@ vol_10 <- InputVol[[10]]
 tar_10 <- Targets[[10]]
 percent_10 <- percent_list[[10]]
 
+
+all(lapply(c(1:length(vol_10)), function(x) all(as.numeric(row.names(percent_10)) == vol_10[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_10)), function(x) all(as.numeric(colnames(percent_10)) == tar_10[[x]]$Node)))
+
 table10 <- OD_Bal(volume_list = vol_10, percent = percent_10, target_list = tar_10)
 
 for(i in c(1:20)){
@@ -386,6 +429,10 @@ print(rowSums(table10[[i]],na.rm = TRUE))
 vol_11 <- InputVol[[11]]
 tar_11 <- Targets[[11]]
 percent_11 <- percent_list[[11]]
+
+all(lapply(c(1:length(vol_11)), function(x) all(as.numeric(row.names(percent_11)) == vol_11[[x]]$Node)))
+  
+all(lapply(c(1:length(vol_11)), function(x) all(as.numeric(colnames(percent_11)) == tar_11[[x]]$Node)))
 
 table11 <- OD_Bal(volume_list = vol_11, percent = percent_11, target_list = tar_11)
 
