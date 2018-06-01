@@ -19,11 +19,12 @@ library(reshape2)
 
 read_excel_sheets <- function(file){
   
-  sheets <- readxl::excel_sheets("TablePercents_split.xlsx")
-  x <- lapply(sheets, function(x) readxl::read_xlsx("TablePercents_split.xlsx", sheet = x,col_names = FALSE, na = 'NA'))
+  sheets <- readxl::excel_sheets(file)
+  x <- lapply(sheets, function(x) readxl::read_xlsx(file, sheet = x,col_names = TRUE, na = 'NA'))
   x <- lapply(x, as.matrix)
+  x <- lapply(x, function(y) {row.names(y) <-  y[,1]; y[,-1]})
   names(x) <- sheets
-  x
+  return(x)
 }
 
 percent_list <- read_excel_sheets("TablePercents_split.xlsx")
@@ -193,9 +194,13 @@ OD_Bal <- function(volume_list,percent,target_list){
   
   table_list[[i]] <- dat_final 
   
+  table_list <- lapply(table_list, function(x) {row.names(x) <- row.names(percent); x})
+  table_list <- lapply(table_list, function(x) {colnames(x) <- colnames(percent); x})
+  
   }
   return(table_list)
   }
+  
   print('One row of data - target / volume')
   
   table_list <- list()
@@ -208,6 +213,9 @@ OD_Bal <- function(volume_list,percent,target_list){
     dat_final <- target / volume
     
     table_list[[i]] <- dat_final
+    
+    table_list <- lapply(table_list, function(x) {row.names(x) <- row.names(percent); x})
+    table_list <- lapply(table_list, function(x) {colnames(x) <- colnames(percent); x})
   }
   return(table_list)
 }
