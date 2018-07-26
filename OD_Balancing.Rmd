@@ -15,7 +15,7 @@ library(readxl)
 
 
 ```{r sample data}
-rm(list = ls())
+
 # percent <- matrix(c(.058996,0,0,0,0,0,0,0,0,0,0,
 #                     .015345,0,.021764,0,0,0,0,0,0,0,0,
 #                     .023861,0,.0454,.205,0,0,0,0,0,0,0,
@@ -72,19 +72,17 @@ rm(list = ls())
 ```
 
 
-
-
 Check to ensure that the target and volume sets sum to the same value.
 
 ```{r Check datasets}
 
-vol_11 <- InputVol[[11]]
-tar_11 <- Targets[[11]]
-percent_11 <- percent_list[[11]]
+vol_1 <- InputVol[[11]]
+tar_1 <- Targets[[11]]
+percent_1 <- percent_list[[11]]
 
-volume <- vol_11[[20]]$InputVol
-target <- tar_11[[20]]$Value
-percent  <- percent_11
+volume <- vol_1[[20]]$InputVol
+target <- tar_1[[20]]$Target
+percent  <- percent_1
 
 sum(target) == sum(volume)
 
@@ -140,7 +138,7 @@ scramble <- function(volume,percent,target) {
       # itr <- itr + 1
       
       ##if total cars are less than 5 "break" the loop
-      if(abs(sum(x * volume, na.rm = T) - target[n]) < 6) {
+      if(abs(sum(x * volume, na.rm = T) - target[n]) < 2) {
         break
       }
     }
@@ -186,7 +184,7 @@ percent_fix <- function(dat,target,volume){
         min_col <- match(sort(col_diff)[index1],col_diff)
         index1 <- index1 + 1
         
-        log1 <- !is.na(y[min_col]) & y[min_col] >= 0.01 & y[min_col] <= 0.99
+        log1 <- !is.na(y[min_col]) & y[min_col] >= 0 & y[min_col] <= 0.99
         log2 <- !is.na(y[min_col]) & y[min_col] == 1
         
         if(log1 | log2 ){
@@ -200,7 +198,7 @@ percent_fix <- function(dat,target,volume){
         max_col <- match(sort(col_diff,decreasing = TRUE)[index2],col_diff)
         index2 <- index2 + 1
         
-        log1 <- !is.na(y[max_col]) & y[max_col] >= 0.01 & y[max_col] <= 0.99
+        log1 <- !is.na(y[max_col]) & y[max_col] >= 0.01 & y[max_col] <= 1
         log2 <- !is.na(y[max_col]) & y[max_col] == 1
         
         if(log1 | log2 ){
@@ -252,11 +250,13 @@ Create a function to distrubute the remainding balance across the table.
 ```{r proportion percentages}
 
 porportion <- function(percent,volume) {
+  # 
+  # percent <- perc
+  # volume <- volume
   
   dat_new <- apply(percent,2,function(x) x * volume)
   
   # round(apply(dat,2,function(x) x * volume),0)
-  
   
   sum_col <- colSums(dat_new, na.rm = TRUE)
   
@@ -272,12 +272,32 @@ porportion <- function(percent,volume) {
                  x = c(1:ncol(prop_diff)))
   
   k <- percent - diff
-  
+
+  for(n in c(1:nrow(k))){
+
+    col_num <- ncol(k)
+
+    repeat{
+
+      vector <- k
+      vector[n,col_num] <- vector[n,col_num] - (sum(vector[n,], na.rm = TRUE)-1)
+
+      col_num <- col_num - 1
+
+      if(vector[n,col_num+1]>=0){
+        break
+      }
+    }
+    k[n,col_num+1] <- vector[n,col_num+1]
+  }
+
   dat_final <- k
-  dat_final[,ncol(dat_final)] <- k[,ncol(k)] - (rowSums(k, na.rm = TRUE)-1)
-  
+  # dat_final[,22] <- dat_final[,22] - (rowSums(k, na.rm = FALSE) -1)
   return(dat_final)
 }
+
+
+
 ```
 
 Check the final data set.
@@ -287,15 +307,11 @@ final_data <- porportion(percent = perc, volume = volume)
 
 final_data
 rowSums(final_data, na.rm = TRUE)
-colSums(apply(final_data,2,function(x) x*volume),na.rm = TRUE)-target
+round(colSums(apply(final_data,2,function(x) x*volume),na.rm = TRUE)-target,3)
 ```
 
-Show the difference from the original.
 
-```{r difference from start}
-
-round(final_data - percent,3)
-
+```{r combine table 11}
 
 ```
 

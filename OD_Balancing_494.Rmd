@@ -1,0 +1,756 @@
+---
+title: "OD Balancing"
+output:
+  html_notebook:
+    theme: united
+    highlight: tango
+---
+
+```{r setup}
+
+knitr::opts_knit$set(root.dir = "C:/Users/dgallen/Desktop/Projects/OD balance/OD_494")
+getwd()
+library(readxl)
+library(reshape2)
+```
+
+## Functions
+
+```{r load data}
+# rm(list = ls())
+
+read_excel_sheets <- function(file){
+  
+  sheets <- readxl::excel_sheets(file)
+  x <- lapply(sheets, function(x) readxl::read_xlsx(file, sheet = x,col_names = TRUE, na = 'NA'))
+  x <- lapply(x, as.matrix)
+  x <- lapply(x, function(y) {row.names(y) <-  y[,1]; y[,-1,drop=FALSE]})
+  names(x) <- sheets
+  return(x)
+}
+
+percent_list <- read_excel_sheets("TablePercents_split.xlsx")
+
+InputVolume <- read.csv('InputVols.csv')
+
+InputVol <- list()
+
+for(n in 1:length(levels(as.factor(InputVolume$Table)))) {
+
+  g <- InputVolume[InputVolume$Table==n,]
+
+  tab <- split(g,paste("TP",g$TimePeriod,sep=''))
+
+  InputVol[[n]] <- tab
+}
+
+
+Target <- read.csv('TargetVols.csv')
+
+Targets <- list()
+
+for(n in 1:length(levels(as.factor(Target$Table)))) {
+
+  g <- Target[Target$Table==n,]
+
+  tab <- split(g,paste("TP",g$TimePeriod,sep=''))
+
+  Targets[[n]] <- tab
+}
+
+
+```
+
+```{r OD function}
+
+OD_Bal <- function(volume_list,percent,target_list,limit = 5){
+  
+  if(nrow(percent) != 1){
+  
+  table_list <- list()
+  
+  for(i in c(1:length(volume_list))){
+    
+    volume <- volume_list[[i]]$InputVol
+    target <- target_list[[i]]$Target
+    
+    # col_fix <- function(volume,percent,target) {
+    
+    col_no <- ncol(percent)
+    row_no <- nrow(percent)
+    
+    ## setup a matrix to hold the results
+    dat <- matrix(nrow = row_no, ncol = col_no)
+    
+    
+    for(n in c(1:col_no)) {
+      
+      x <- percent[,n]
+      
+      cnt <- 1
+      # itr <- 1
+      
+      ##repeat loop will stop on given if command - see below
+      repeat {
+        x[cnt] <- ifelse(sum(x*volume, na.rm = T)-target[n] < 0,
+                         (ifelse(x[cnt] >= .99,
+                                 x[cnt],x[cnt] + .01)),
+                         (ifelse(x[cnt] <= .01,
+                                 x[cnt],x[cnt] - .01)))
+        
+        cnt <- ifelse(cnt == row_no, 1, cnt + 1)
+        # itr <- itr + 1
+        
+        ##if total cars are less than 5 "break" the loop
+        if(abs(sum(x * volume, na.rm = T) - target[n]) < limit) {
+          break
+        }
+      }
+      dat[,n] <- x
+    }
+    
+    dat_2 <- dat
+    
+    for(n in c(1:row_no)){
+    
+    y <- dat_2[n,]
+
+    repeat {
+      
+      col_diff <- colSums(apply(dat_2,2,function(x) x*volume), na.rm = TRUE)-target
+      row_sum <- sum(y, na.rm = TRUE)
+      
+      index1 <- 1
+      
+      repeat {
+        
+        min_col <- match(sort(col_diff)[index1],col_diff)
+        index1 <- index1 + 1
+        
+      log1 <- !is.na(y[min_col]) & y[min_col] >= 0 & y[min_col] <= 0.99
+      log2 <- !is.na(y[min_col]) & y[min_col] == 1
+      
+      if(log1 | log2 ){
+          break
+        }
+      }
+      
+      index2 <- 1
+      
+      repeat {
+        
+        max_col <- match(sort(col_diff,decreasing = TRUE)[index2],col_diff)
+        index2 <- index2 + 1
+        
+        log1 <- !is.na(y[max_col]) & y[max_col] >= 0.01 & y[max_col] <= 1
+        log2 <- !is.na(y[max_col]) & y[max_col] == 1
+        
+        if(log1 | log2 ){
+          break
+        }
+      }
+      
+      x <- ifelse(row_sum < 1, 
+                  min_col, 
+                  max_col)
+      
+      y[x] <- ifelse(sum(y, na.rm = TRUE) >= 0.99 & sum(y, na.rm = TRUE) <= 1.01,
+                     
+                     y[x],
+                     
+                     ifelse(sum(y, na.rm = TRUE) < 1, 
+                            y[x] + .001,
+                            y[x] - .001))
+      
+      dat_2[n,] <- y
+      
+      if(sum(y,na.rm = TRUE) >= 0.99 & sum(y,na.rm = TRUE) <= 1.01) {
+        break
+        }
+      }
+    }
+    
+    # row_fix <- percent_fix(col_fix = col_fix, target = target,volume = volume)
+    # 
+    # porportion <- function(percent,volume) {
+    
+    vol_new <- apply(dat_2,2,function(x) x * volume)
+    
+    # round(apply(dat,2,function(x) x * volume),0)
+    
+    sum_col <- colSums(vol_new, na.rm = TRUE)
+    
+    porportion <- mapply(function(x) {vol_new[,x]/sum_col[x]},
+                         x = c(1:ncol(vol_new)))
+    
+    col_diff <- sum_col-target
+    
+    prop_diff <- mapply(function(x) {porportion[,x]*col_diff[x]},
+                        x = c(1:ncol(porportion)))
+    
+    diff <- mapply(function(x) {ifelse(is.na(prop_diff[,x]/volume),prop_diff[,x],prop_diff[,x]/volume)},
+                   x = c(1:ncol(prop_diff)))
+    
+    k <- dat_2 - diff
+      
+    for(n in c(1:nrow(k))){
+    
+    col_num <- ncol(k)
+    
+    repeat{
+      
+      vector <- k
+      vector[n,col_num] <- vector[n,col_num] - (sum(vector[n,], na.rm = TRUE)-1)
+      
+      col_num <- col_num - 1
+      
+      if(vector[n,col_num+1]>=0 | is.na(vector[n,col_num+1])){
+        break
+      }
+    }
+    k[n,col_num+1] <- vector[n,col_num+1]
+  }
+  
+  table_list[[i]] <- k
+  
+  table_list <- lapply(table_list, function(x) {row.names(x) <- row.names(percent); x})
+  table_list <- lapply(table_list, function(x) {colnames(x) <- colnames(percent); x})
+  
+  }
+  names(table_list) <- names(volume_list)
+  return(table_list)
+  }
+  
+  print('One row of data - target / volume')
+  
+  table_list <- list()
+  
+  for(i in c(1:length(volume_list))){
+    
+    volume <- volume_list[[i]]$InputVol
+    target <- target_list[[i]]$Target
+    
+    dat_final <- target / volume
+    
+    table_list[[i]] <- matrix(dat_final,nrow = 1)
+    
+    table_list <- lapply(table_list, function(x) {row.names(x) <- row.names(percent); x})
+    table_list <- lapply(table_list, function(x) {colnames(x) <- colnames(percent); x})
+   
+  }
+  names(table_list) <- names(volume_list)
+  return(table_list)
+}
+
+
+```
+
+```{r melt table}
+melt_table <- function(table, volume, time_periods = 20){
+  
+  volume_new <- list()
+  
+  for(i in c(1:time_periods)){
+    
+    vol <- volume[[i]]$InputVol
+    tab <- table[[i]]
+    
+    volume_new[[i]] <- tab * vol
+    names(volume_new)[[i]] <- names(table)[[i]]
+  }
+
+table_melt <- lapply(volume_new,melt)
+
+table_melt <- lapply(c(1:time_periods), function(x) {colnames(table_melt[[x]])[3] = names(table_melt)[[x]];table_melt[[x]]})
+
+final_Table <- data.frame(table_melt[[2]][,1:2])
+y <- vector()
+
+for(n in c(1:time_periods)){
+  
+  x <- table_melt[[n]][,3]
+  final_Table <- cbind(final_Table,x)
+  y[n] <- colnames(table_melt[[n]])[3]
+
+}
+colnames(final_Table)[3:22] <- y
+
+final_Table <- final_Table %>% filter(!is.na(TP1)) 
+
+return(final_Table)
+}
+
+
+melt_table_perc <- function(table, volume, time_periods = 20){
+  
+  volume_new <- list()
+  
+  for(i in c(1:time_periods)){
+    
+    vol <- volume[[i]]$InputVol
+    tab <- table[[i]]
+    
+    volume_new[[i]] <- tab
+    names(volume_new)[[i]] <- names(table)[[i]]
+  }
+
+table_melt <- lapply(volume_new,melt)
+
+table_melt <- lapply(c(1:time_periods), function(x) {colnames(table_melt[[x]])[3] = names(table_melt)[[x]];table_melt[[x]]})
+
+final_Table <- data.frame(table_melt[[2]][,1:2])
+y <- vector()
+
+for(n in c(1:time_periods)){
+  
+  x <- table_melt[[n]][,3]
+  final_Table <- cbind(final_Table,x)
+  y[n] <- colnames(table_melt[[n]])[3]
+
+}
+colnames(final_Table)[3:22] <- y
+
+final_Table <- final_Table %>% filter(!is.na(TP1)) 
+
+return(final_Table)
+}
+
+```
+
+
+## Tables
+
+```{r table 1}
+
+vol_1 <- InputVol[[1]]
+tar_1 <- Targets[[1]]
+percent_1 <- percent_list[[1]]
+
+sapply(c(1:length(vol_1)), function(x) sum(vol_1[[x]]$InputVol,na.rm = TRUE) == sum(tar_1[[x]]$Target,na.rm = TRUE))
+
+sapply(c(1:length(vol_1)), function(x) sum(vol_1[[x]]$InputVol,na.rm = TRUE) == sum(tar_1[[x]]$Target,na.rm = TRUE))
+
+all(sapply(c(1:length(vol_1)), function(x) all(as.numeric(row.names(percent_1)) == vol_1[[x]]$Node)))
+
+(sapply(c(1:length(vol_1)), function(x) (as.numeric(colnames(percent_1)) == tar_1[[x]]$Node)))
+
+table1 <- OD_Bal(volume_list = vol_1, percent = percent_1, target_list = tar_1, limit = 10)
+
+for(i in c(1:20)){
+print(colSums(apply(table1[[i]],2,function(x) x*vol_1[[i]]$InputVol), na.rm = TRUE)-tar_1[[i]]$Target)
+
+print(rowSums(table1[[i]],na.rm = TRUE))
+
+}
+dir()
+
+#Tables 4 and 5 TP 12 TP13 are not balancing. Manual fix in excel.
+
+
+# table1[[4]] <- as.matrix(read.csv("final_data_1_TP12.csv")[,-1])
+# table1[[5]] <- as.matrix(read.csv("final_data_1_TP13.csv")[,-1])
+# 
+# row.names(table1[[4]]) <- row.names(table1[[1]])
+# row.names(table1[[5]]) <- row.names(table1[[1]])
+# 
+# colnames(table1[[4]]) <- colnames(table1[[1]])
+# colnames(table1[[5]]) <- colnames(table1[[1]])
+
+final_Table_1 <- melt_table(table1,volume = vol_1)
+final_Table_1_perc <- melt_table_perc(table1,volume = vol_1)
+```
+
+```{r table 2}
+vol_2 <- InputVol[[2]]
+tar_2 <- Targets[[2]]
+percent_2 <- percent_list[[2]]
+
+sapply(c(1:length(vol_2)), function(x) sum(vol_2[[x]]$InputVol,na.rm = TRUE) == sum(tar_2[[x]]$Target,na.rm = TRUE))
+
+all(sapply(c(1:length(vol_2)), function(x) all(as.numeric(row.names(percent_2)) == vol_2[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_2)), function(x) all(as.numeric(colnames(percent_2)) == tar_2[[x]]$Node)))
+
+
+table_2 <- OD_Bal(volume_list = vol_2, percent = percent_2, target_list = tar_2)
+
+for(i in c(1:20)){
+print(colSums(apply(table_2[[i]],2,function(x) x*vol_2[[i]]$InputVol), na.rm = TRUE)-tar_2[[i]]$Target)
+
+print(rowSums(table_2[[i]],na.rm = TRUE))
+}
+
+final_Table_2 <- melt_table(table_2, volume = vol_2)
+final_Table_2_perc <- melt_table_perc(table_2,volume = vol_2)
+
+```
+
+```{r table 3}
+vol_3 <- InputVol[[3]]
+tar_3 <- Targets[[3]]
+percent_3 <- percent_list[[3]]
+
+(sapply(c(1:length(vol_3)), function(x) (as.numeric(row.names(percent_3)) == vol_3[[x]]$Node)))
+  
+(sapply(c(1:length(vol_3)), function(x) (as.numeric(colnames(percent_3)) == tar_3[[x]]$Node)))
+
+table_3 <- OD_Bal(volume_list = vol_3, percent = percent_3, target_list = tar_3)
+
+for(i in c(1:20)){
+print(colSums(apply(table_3[[i]],2,function(x) x*vol_3[[i]]$InputVol), na.rm = TRUE)-tar_3[[i]]$Target)
+
+print(rowSums(table_3[[i]],na.rm = TRUE))
+}
+
+final_Table_3 <- melt_table(table_3,volume = vol_3)
+final_Table_3_perc <- melt_table_perc(table_3,volume = vol_3)
+```
+
+```{r table 4}
+
+vol_4 <- InputVol[[4]]
+tar_4 <- Targets[[4]]
+percent_4 <- percent_list[[4]]
+
+all(sapply(c(1:length(vol_4)), function(x) all(as.numeric(row.names(percent_4)) == vol_4[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_4)), function(x) all(as.numeric(colnames(percent_4)) == tar_4[[x]]$Node)))
+
+table_4 <- OD_Bal(volume_list = vol_4, percent = percent_4, target_list = tar_4)
+
+for(i in c(1:20)){
+print(colSums(apply(table_4[[i]],2,function(x) x*vol_4[[i]]$InputVol), na.rm = TRUE)-tar_4[[i]]$Target)
+
+print(rowSums(table_4[[i]],na.rm = TRUE))
+}
+
+final_Table_4 <- melt_table(table_4,volume = vol_4)
+final_Table_4_perc <- melt_table_perc(table_4,volume = vol_4)
+
+```
+
+```{r table 5}
+
+vol_5 <- InputVol[[5]]
+tar_5 <- Targets[[5]]
+percent_5 <- percent_list[[5]]
+
+all(sapply(c(1:length(vol_5)), function(x) all(as.numeric(row.names(percent_5)) == vol_5[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_5)), function(x) all(as.numeric(colnames(percent_5)) == tar_5[[x]]$Node)))
+
+table5 <- OD_Bal(volume_list = vol_5, percent = percent_5, target_list = tar_5,limit = 6)
+
+for(i in c(1:20)){
+print(colSums(apply(table5[[i]],2,function(x) x*vol_5[[i]]$InputVol), na.rm = TRUE)-tar_5[[i]]$Target)
+
+print(rowSums(table5[[i]],na.rm = TRUE))
+}
+
+final_Table_5 <- melt_table(table5,volume = vol_5)
+final_Table_5_perc <- melt_table_perc(table5,volume = vol_5)
+
+```
+
+```{r table 6}
+
+vol_6 <- InputVol[[6]]
+tar_6 <- Targets[[6]]
+percent_6 <- percent_list[[6]]
+
+sapply(c(1:length(vol_6)), function(x) sum(vol_6[[x]]$InputVol,na.rm = TRUE) - sum(tar_6[[x]]$Target,na.rm = TRUE))
+
+(sapply(c(1:length(vol_6)), function(x) all(as.numeric(row.names(percent_6)) == vol_6[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_6)), function(x) all(as.numeric(colnames(percent_6)) == tar_6[[x]]$Node)))
+
+table6 <- OD_Bal(volume_list = vol_6, percent = percent_6, target_list = tar_6,limit = 10)
+
+for(i in c(1:20)){
+print(colSums(apply(table6[[i]],2,function(x) x*vol_6[[i]]$InputVol), na.rm = TRUE)-tar_6[[i]]$Target)
+
+print(rowSums(table6[[i]],na.rm = TRUE))
+}
+
+final_Table_6 <- melt_table(table6,volume = vol_6)
+final_Table_6_perc <- melt_table_perc(table6,volume = vol_6)
+
+
+```
+
+```{r table 7}
+
+vol_7 <- InputVol[[7]]
+tar_7 <- Targets[[7]]
+percent_7 <- percent_list[[7]]
+
+
+sapply(c(1:length(vol_7)), function(x) sum(vol_7[[x]]$InputVol,na.rm = TRUE) - sum(tar_7[[x]]$Target,na.rm = TRUE))
+
+all(sapply(c(1:length(vol_7)), function(x) all(as.numeric(row.names(percent_7)) == vol_7[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_7)), function(x) all(as.numeric(colnames(percent_7)) == tar_7[[x]]$Node)))
+
+
+table7 <- OD_Bal(volume_list = vol_7, percent = percent_7, target_list = tar_7)
+
+for(i in c(1:20)){
+print(colSums(apply(table7[[i]],2,function(x) x*vol_7[[i]]$InputVol), na.rm = TRUE)-tar_7[[i]]$Target)
+
+print(rowSums(table7[[i]],na.rm = TRUE))
+}
+
+final_Table_7 <- melt_table(table7,volume = vol_7)
+final_Table_7_perc <- melt_table_perc(table7,volume = vol_7)
+
+```
+
+```{r table 8}
+
+vol_8 <- InputVol[[8]]
+tar_8 <- Targets[[8]]
+percent_8 <- percent_list[[8]]
+
+sapply(c(1:length(vol_8)), function(x) sum(vol_8[[x]]$InputVol,na.rm = TRUE) - sum(tar_8[[x]]$Target,na.rm = TRUE))
+
+all(sapply(c(1:length(vol_8)), function(x) all(as.numeric(row.names(percent_8)) == vol_8[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_8)), function(x) all(as.numeric(colnames(percent_8)) == tar_8[[x]]$Node)))
+
+table8 <- OD_Bal(volume_list = vol_8, percent = percent_8, target_list = tar_8,limit = 10)
+
+for(i in c(1:20)){
+print(colSums(apply(table8[[i]],2,function(x) x*vol_8[[i]]$InputVol), na.rm = TRUE)-tar_8[[i]]$Target)
+
+print(rowSums(table8[[i]],na.rm = TRUE))
+}
+
+final_Table_8 <- melt_table(table8,volume = vol_8)
+final_Table_8_perc <- melt_table_perc(table8,volume = vol_8)
+
+```
+
+```{r table 9}
+
+vol_9 <- InputVol[[9]]
+tar_9 <- Targets[[9]]
+percent_9 <- percent_list[[9]]
+
+sapply(c(1:length(vol_9)), function(x) sum(vol_9[[x]]$InputVol,na.rm = TRUE) - sum(tar_9[[x]]$Target,na.rm = TRUE))
+
+all(sapply(c(1:length(vol_9)), function(x) all(as.numeric(row.names(percent_9)) == vol_9[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_9)), function(x) all(as.numeric(colnames(percent_9)) == tar_9[[x]]$Node)))
+
+table9 <- OD_Bal(volume_list = vol_9, percent = percent_9, target_list = tar_9)
+
+for(i in c(1:20)){
+print(colSums(apply(table9[[i]],2,function(x) x*vol_9[[i]]$InputVol), na.rm = TRUE)-tar_9[[i]]$Target)
+
+print(rowSums(table9[[i]],na.rm = TRUE))
+}
+
+final_Table_9 <- melt_table(table9,volume = vol_9)
+final_Table_9_perc <- melt_table_perc(table9,volume = vol_9)
+```
+
+```{r table 10}
+
+vol_10 <- InputVol[[10]]
+tar_10 <- Targets[[10]]
+percent_10 <- percent_list[[10]]
+
+sapply(c(1:length(vol_10)), function(x) sum(vol_10[[x]]$InputVol,na.rm = TRUE) - sum(tar_10[[x]]$Target,na.rm = TRUE))
+
+all(sapply(c(1:length(vol_10)), function(x) all(as.numeric(row.names(percent_10)) == vol_10[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_10)), function(x) all(as.numeric(colnames(percent_10)) == tar_10[[x]]$Node)))
+
+table10 <- OD_Bal(volume_list = vol_10, percent = percent_10, target_list = tar_10,limit = 6)
+
+for(i in c(1:20)){
+print(colSums(apply(table10[[i]],2,function(x) x*vol_10[[i]]$InputVol), na.rm = TRUE)-tar_10[[i]]$Target)
+
+print(rowSums(table10[[i]],na.rm = TRUE))
+}
+
+final_Table_10 <- melt_table(table10,volume = vol_10)
+final_Table_10_perc <- melt_table_perc(table10,volume = vol_10)
+
+```
+
+```{r table 11}
+dir()
+vol_11 <- InputVol[[11]]
+tar_11 <- Targets[[11]]
+percent_11 <- percent_list[[11]]
+
+sapply(c(1:length(vol_11)), function(x) sum(vol_11[[x]]$InputVol,na.rm = TRUE) - sum(tar_11[[x]]$Target,na.rm = TRUE))
+
+all(sapply(c(1:length(vol_11)), function(x) all(as.numeric(row.names(percent_11)) == vol_11[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_11)), function(x) all(as.numeric(colnames(percent_11)) == tar_11[[x]]$Node)))
+
+table11 <- OD_Bal(volume_list = vol_11, percent = percent_11, target_list = tar_11,limit = 2)
+
+for(i in c(1:20)){
+print(colSums(apply(table11[[i]],2,function(x) x*vol_11[[i]]$InputVol), na.rm = TRUE)-tar_11[[i]]$Target)
+
+print(rowSums(table11[[i]],na.rm = TRUE))
+}
+
+# x <- table11[[1]]
+# 
+# table11[[1]] <- final_1
+# table11[[2]] <- final_2
+# table11[[3]] <- final_3
+# table11[[4]] <- final_4
+# table11[[5]] <- final_5
+# table11[[6]] <- final_6
+# table11[[7]] <- final_7
+# table11[[8]] <- final_8
+# table11[[9]] <- final_9
+# table11[[10]] <- final_10
+# table11[[11]] <- final_11
+# table11[[12]] <- final_12
+# table11[[13]] <- final_13
+# table11[[14]] <- final_14
+# table11[[15]] <- final_15
+# table11[[16]] <- final_16
+# table11[[17]] <- final_17
+# table11[[18]] <- final_18
+# table11[[19]] <- final_19
+# table11[[20]] <- final_20
+# 
+# table11 <- lapply(table11,function(u) {rownames(u) <- rownames(x);u})
+# table11 <- lapply(table11,function(u) {colnames(u) <- colnames(x);u})
+
+final_Table_11 <- melt_table(table11,volume = vol_11)
+final_Table_11_perc <- melt_table_perc(table11,volume = vol_11)
+```
+
+```{r table 12}
+
+vol_12 <- InputVol[[12]]
+tar_12 <- Targets[[12]]
+percent_12 <- percent_list[[12]]
+
+sapply(c(1:length(vol_12)), function(x) sum(vol_12[[x]]$InputVol,na.rm = TRUE) - sum(tar_12[[x]]$Target,na.rm = TRUE))
+
+all(sapply(c(1:length(vol_12)), function(x) all(as.numeric(row.names(percent_12)) == vol_12[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_12)), function(x) all(as.numeric(colnames(percent_12)) == tar_12[[x]]$Node)))
+
+table12 <- OD_Bal(volume_list = vol_12, percent = percent_12, target_list = tar_12)
+
+for(i in c(1:20)){
+print(colSums(apply(table12[[i]],2,function(x) x*vol_12[[i]]$InputVol), na.rm = TRUE)-tar_12[[i]]$Target)
+
+print(rowSums(table12[[i]],na.rm = TRUE))
+}
+
+final_Table_12 <- melt_table(table12,volume = vol_12)
+final_Table_12_perc <- melt_table_perc(table12,volume = vol_12)
+
+```
+
+```{r table 13}
+
+vol_13 <- InputVol[[13]]
+tar_13 <- Targets[[13]]
+percent_13 <- percent_list[[13]]
+
+sapply(c(1:length(vol_13)), function(x) sum(vol_13[[x]]$InputVol,na.rm = TRUE) - sum(tar_13[[x]]$Target,na.rm = TRUE))
+
+all(sapply(c(1:length(vol_13)), function(x) all(as.numeric(row.names(percent_13)) == vol_13[[x]]$Node)))
+  
+all(sapply(c(1:length(vol_13)), function(x) all(as.numeric(colnames(percent_13)) == tar_13[[x]]$Node)))
+
+table13 <- OD_Bal(volume_list = vol_13, percent = percent_13, target_list = tar_13)
+
+print(lapply(table13,sum))
+
+final_Table_13 <- melt_table(table13,volume = vol_13)
+final_Table_13_perc <- melt_table_perc(table13,volume = vol_13)
+```
+
+```{r table 14}
+
+vol_14 <- InputVol[[14]]
+tar_14 <- Targets[[14]]
+percent_14 <- percent_list[[14]]
+
+rowSums(percent_14,na.rm = TRUE)
+sapply(c(1:length(vol_14)), function(x) sum(vol_14[[x]]$InputVol,na.rm = TRUE) - sum(tar_14[[x]]$Target,na.rm = TRUE))
+
+(sapply(c(1:length(vol_14)), function(x) (as.numeric(row.names(percent_14)) == vol_14[[x]]$Node)))
+  
+(sapply(c(1:length(vol_14)), function(x) (as.numeric(colnames(percent_14)) == tar_14[[x]]$Node)))
+
+table14 <- OD_Bal(volume_list = vol_14, percent = percent_14, target_list = tar_14,limit = 1)
+
+x <- list()
+
+for(i in c(1:20)){
+x[[i]] <- (colSums(apply(table14[[i]],2,function(x) x*vol_14[[i]]$InputVol),na.rm = TRUE)-tar_14[[i]]$Target)
+
+# names(x) <- names(vol_14)
+# print(rowSums(table14[[i]],na.rm = TRUE))
+}
+
+o <- do.call(rbind,x)
+
+row.names(o) <- names(vol_14)
+
+
+
+for(i in c(1:20)){
+print(colSums(apply(table14[[i]],2,function(x) x*vol_14[[i]]$InputVol), na.rm = TRUE)-tar_14[[i]]$Target)
+
+print(rowSums(table14[[i]],na.rm = TRUE))
+}
+
+(colSums(apply(table14[[10]],2,function(x) x*vol_14[[10]]$InputVol),na.rm = TRUE)-tar_14[[10]]$Target)
+
+final_Table_14 <- melt_table(table = table14,volume = vol_14)
+
+
+```
+
+```{r final_bind}
+
+final_vol <- rbind(final_Table_1,
+               final_Table_2,
+               final_Table_3,
+               final_Table_4,
+               final_Table_5,
+               final_Table_6,
+               final_Table_7,
+               final_Table_8,
+               final_Table_9,
+               final_Table_10,
+               final_Table_11,
+               final_Table_12,
+               final_Table_13)
+
+final_perc <- rbind(final_Table_1_perc,
+               final_Table_2_perc,
+               final_Table_3_perc,
+               final_Table_4_perc,
+               final_Table_5_perc,
+               final_Table_6_perc,
+               final_Table_7_perc,
+               final_Table_8_perc,
+               final_Table_9_perc,
+               final_Table_10_perc,
+               final_Table_11_perc,
+               final_Table_12_perc,
+               final_Table_13_perc)
+
+write.csv(final_vol,'494_Vehicle_Routes_7.25.18.csv',row.names = FALSE)
+
+write.csv(final_perc,'494_Vehicle_Routes_percent_7.25.18.csv',row.names = FALSE)
+
+getwd()
+```
+
